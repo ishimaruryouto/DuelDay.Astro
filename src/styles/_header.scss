@@ -1,0 +1,28 @@
+header {
+    position: fixed; // 画面上部に固定
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px; // 上下左右の余白
+    display: flex;
+    justify-content: flex-end; // 右端に配置
+    z-index: 1001; // モーダルや他要素より前面
+}
+
+.hamburger {
+    display: flex; // 中の .bar を縦並びに
+    flex-direction: column;
+    justify-content: space-between; // 上下のスペースを均等に
+    width: 40px; // 全体の幅
+    height: 20px; // 全体の高さ
+    cursor: pointer; // ホバー時にポインタ
+}
+
+.bar {
+    display: block; // 要素をブロックに
+    width: 100%; // 親（28px）いっぱい
+    height: 2px; // 棒の太さ
+    background-color: #000; // 白色
+    border-radius: 2px; // 角丸にして見た目を柔らかく
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
