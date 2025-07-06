@@ -9,7 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.10.2"
+    "astro": "^5.10.2",
+    "firebase": "^11.10.0"
   },
   "devDependencies": {
     "ress": "^5.0.2",
