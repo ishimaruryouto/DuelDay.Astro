@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/main.scss";
+---
+
+<style lang="scss">
+    .page_wrap {
+        p {
+            width: 280px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.4rem;
+            background: #ba2b1d;
+            border-radius: 10px;
+            margin: 0 auto;
+            margin-top: 130px;
+        }
+        a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 250px;
+            height: 50px;
+            font-size: 1.4rem;
+            background: #ba2b1d;
+            border-radius: 10px;
+            margin: 0 auto;
+            margin-top: 130px;
+        }
+    }
+</style>
+
+<BaseLayout>
+    <div class="page_wrap">
+        <h1>アカウント登録</h1>
+        <p>登録を完了しました！</p>
+        <a href="/home" class="btn">次へ</a>
+    </div>
+</BaseLayout>

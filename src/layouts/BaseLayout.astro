@@ -1,8 +1,6 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import Account_Registration from "../pages/Account_Registration.astro";
-import Login from "../pages/Login.astro";
 import "../styles/main.scss";
 ---
 
@@ -15,11 +13,8 @@ import "../styles/main.scss";
     </head>
     <body>
         <Header />
-        <!-- <Header/> -->
         <main>
             <slot />
-            <Account_Registration />
-            <Login />
         </main>
         <Footer />
     </body>
