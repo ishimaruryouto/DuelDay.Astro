@@ -1,22 +1,67 @@
 ---
-import "../styles/main.scss";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import "../../styles/main.scss";
 import userIcon from "../assets/user_icon.png";
 import passIcon from "../assets/pass_icon.png";
 ---
 
-<div class="page_wrap">
-    <h1>ログイン</h1>
-    <div class="form_wrap">
-        <form>
-            <div class="page_user">
-                <span class="user_icon"></span>
-                <input type="text" name="username" />
-            </div>
-            <div class="page_pass">
-                <span class="pass_icon"></span>
-                <input type="password" name="password" />
-            </div>
-            <button type="submit" class="btn"> ログイン </button>
-        </form>
+<style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+
+    .form_wrap {
+        width: 65%;
+        margin: 0 auto;
+        .input_wrap {
+            @include mixin.input;
+            &:first-child {
+                margin-top: 80px;
+            }
+            input {
+                height: 50px;
+            }
+        }
+
+        .input_wrap:nth-of-type(1) .icon {
+            @include mixin.icon(url("../../assets/user_icon.png"));
+        }
+
+        .input_wrap:nth-of-type(2) .icon {
+            @include mixin.icon(url("../../assets/pass_icon.png"));
+        }
+
+        .btn {
+            @include mixin.btn;
+        }
+    }
+</style>
+
+<BaseLayout>
+    <div class="page_wrap">
+        <h1>ログイン</h1>
+        <div class="form_wrap">
+            <form>
+                <div class="input_wrap">
+                    <span class="icon"></span>
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="ユーザーネーム"
+                        required
+                        minlength="4"
+                    />
+                </div>
+                <div class="input_wrap">
+                    <span class="icon"></span>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="パスワード"
+                        required
+                        minlength="4"
+                    />
+                </div>
+                <button type="submit" class="btn"> ログイン </button>
+            </form>
+        </div>
     </div>
-</div>
+</BaseLayout>

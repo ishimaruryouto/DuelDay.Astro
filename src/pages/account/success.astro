@@ -4,31 +4,14 @@ import "../../styles/main.scss";
 ---
 
 <style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+
     .page_wrap {
         p {
-            width: 280px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 1.4rem;
-            background: #ba2b1d;
-            border-radius: 10px;
-            margin: 0 auto;
-            margin-top: 130px;
+            @include mixin.success-comn(280px, 100px);
         }
         a {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 250px;
-            height: 50px;
-            font-size: 1.4rem;
-            background: #ba2b1d;
-            border-radius: 10px;
-            margin: 0 auto;
-            margin-top: 130px;
+            @include mixin.success-comn(250px, 50px);
         }
     }
 </style>
@@ -37,6 +20,6 @@ import "../../styles/main.scss";
     <div class="page_wrap">
         <h1>アカウント登録</h1>
         <p>登録を完了しました！</p>
-        <a href="/home" class="btn">次へ</a>
+        <a href="../../pages/" class="btn">次へ</a>
     </div>
 </BaseLayout>

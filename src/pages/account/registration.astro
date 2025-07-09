@@ -2,13 +2,80 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 
+<style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+
+    .form_wrap {
+        width: 65%;
+        margin: 0 auto;
+        .input_wrap {
+            @include mixin.input;
+
+            input {
+                height: 50px;
+            }
+        }
+
+        .input_wrap:nth-of-type(1) .icon {
+            @include mixin.icon(url("../../assets/user_icon.png"));
+        }
+        .input_wrap:nth-of-type(2) .icon {
+            @include mixin.icon(url("../../assets/email_icon.png"));
+        }
+        .input_wrap:nth-of-type(3) .icon {
+            @include mixin.icon(url("../../assets/pass_icon.png"));
+        }
+
+        .btn {
+            @include mixin.btn;
+        }
+    }
+
+    .acount_hav {
+        margin-top: 60px;
+
+        .line_wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+            color: #fff;
+
+            &::before,
+            &::after {
+                content: "";
+                flex-grow: 1;
+                height: 1px;
+                background-color: #fff;
+            }
+
+            span {
+                padding: 0 1rem;
+                font-size: 1rem;
+                white-space: nowrap;
+            }
+        }
+
+        p {
+            width: 90%;
+            border-bottom: 1px solid #fff;
+            margin: 0 auto;
+            margin-top: 20px;
+
+            a {
+                color: #fff;
+            }
+        }
+    }
+</style>
+
 <BaseLayout>
     <div class="page_wrap">
         <h1>アカウント登録</h1>
         <div class="form_wrap">
             <form id="register_form">
-                <div class="page_name">
-                    <span class="name_icon"></span>
+                <div class="input_wrap">
+                    <span class="icon"></span>
                     <input
                         type="text"
                         name="username"
@@ -17,8 +84,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
                         minlength="4"
                     />
                 </div>
-                <div class="page_mail">
-                    <span class="mail_icon"></span>
+                <div class="input_wrap">
+                    <span class="icon"></span>
                     <input
                         type="email"
                         name="email"
@@ -26,8 +93,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
                         required
                     />
                 </div>
-                <div class="page_pass">
-                    <span class="pass_icon"></span>
+                <div class="input_wrap">
+                    <span class="icon"></span>
                     <input
                         type="password"
                         name="password"
@@ -40,7 +107,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
             </form>
             <div class="acount_hav">
                 <div class="line_wrap"><span class="line">or</span></div>
-                <p><a href="/pages/login">すでにアカウントをお持ちの方</a></p>
+                <p>
+                    <a href="../account/login">すでにアカウントをお持ちの方</a>
+                </p>
             </div>
         </div>
     </div>
