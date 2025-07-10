@@ -1,9 +1,60 @@
 ---
 // src/pages/index.astro
 import BaseLayout from "../layouts/BaseLayout.astro";
-import AccountForm from "./account/registration.astro";
+import Header from "../components/Header.astro";
+import "../styles/main.scss";
+import Registration from "./account/registration.astro";
 ---
 
+<style lang="scss">
+	@use "../styles/_mixin.scss" as mixin;
+
+	.page_wrap {
+		h1 {
+			color: #fff;
+			font-size: 1.8rem;
+			margin-bottom: 2rem;
+		}
+	}
+
+	nav {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: 1rem;
+		width: 75%;
+		margin: 0 auto;
+
+		a {
+			width: 135px;
+			height: 135px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #ba2b1d;
+			color: #fff;
+			font-size: 1.4rem;
+			border-radius: 8px;
+			text-decoration: none;
+			padding: 1rem 0;
+
+			&:last-child {
+				width: 290px;
+				height: 135px;
+				grid-column: 1 / span 2;
+			}
+		}
+	}
+</style>
+
 <BaseLayout>
-	<AccountForm />
+	<Header />
+	<div class="page_wrap">
+		<h1>ホーム</h1>
+		<nav>
+			<a href="">ガチャ</a>
+			<a href="">図鑑</a>
+			<a href="">デュエル</a>
+		</nav>
+	</div>
+	<!-- <Registration /> -->
 </BaseLayout>
