@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GachaUi from "../../assets/gacha_ui.png";
+---
+
+<style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+
+    .gacha {
+        img {
+            @include mixin.gacha;
+            padding-top: 120px;
+        }
+    }
+
+    .gacha_btn {
+        display: flex;
+        justify-content: center;
+
+        a {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: lighter;
+            text-align: center;
+            padding: 15px 50px;
+            background: #ba2b1d;
+            border-radius: 20px;
+        }
+    }
+</style>
+
+<BaseLayout>
+    <div class="gacha">
+        <img src={GachaUi.src} alt="ガチャ" />
+    </div>
+    <div class="gacha_btn">
+        <a href="/gacha/result">ガチャを回す</a>
+    </div>
+</BaseLayout>

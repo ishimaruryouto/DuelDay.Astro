@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GachaUi from "../../assets/gacha_ui.png";
+---
+
+<style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+    .result_page {
+        // border: 1px solid skyblue;
+        // padding-bottom: 150px;
+        .card {
+            position: relative;
+            img {
+                @include mixin.gacha;
+                padding-top: 120px;
+            }
+            .info {
+                @include mixin.gacha-info;
+                p {
+                    font-size: 2.2rem;
+                    color: #fff;
+                }
+            }
+        }
+        .finish_btn {
+            @include mixin.gacha-btn;
+            a {
+                color: #fff;
+                font-size: 1.4rem;
+            }
+        }
+        .deadline {
+            p {
+                color: #fff;
+                font-size: 1rem;
+                text-align: center;
+                margin-top: 30px;
+            }
+        }
+    }
+</style>
+
+<BaseLayout>
+    <div class="result_page">
+        <div class="card">
+            <img src={GachaUi.src} alt="ガチャ" />
+            <div class="info">
+                <p>スクワット</p>
+                <p><span>20</span>回</p>
+                <p>攻撃＋10</p>
+            </div>
+        </div>
+
+        <div class="finish_btn">
+            <a href="/gacha/finish">OK</a>
+        </div>
+
+        <div class="deadline">
+            <p>有効期限:今週日曜日まで</p>
+        </div>
+    </div>
+</BaseLayout>

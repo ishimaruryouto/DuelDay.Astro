@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GachaUi from "../../assets/gacha_ui.png";
+---
+
+<style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+    .finish_page {
+        .card {
+            position: relative;
+            img {
+                @include mixin.gacha;
+                padding-top: 120px;
+            }
+            .info {
+                @include mixin.gacha-info;
+                p {
+                    font-size: 2.2rem;
+                    color: #fff;
+                }
+            }
+        }
+
+        .gacha_btn {
+            @include mixin.gacha-btn;
+
+            a {
+                color: #fff;
+                font-size: 1.4rem;
+            }
+        }
+    }
+</style>
+
+<BaseLayout>
+    <div class="finish_page">
+        <div class="card">
+            <img src={GachaUi.src} alt="ガチャ" />
+            <div class="info">
+                <p>スクワット</p>
+                <p><span>20</span>回</p>
+                <p>攻撃＋10</p>
+            </div>
+        </div>
+        <div class="gacha_btn">
+            <a href="/">終了</a>
+        </div>
+    </div>
+</BaseLayout>

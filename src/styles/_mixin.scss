@@ -73,3 +73,29 @@
     height: auto;
     margin: 0 auto;
 }
+
+@mixin gacha-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 225px;
+    background: #ba2b1d;
+    border-radius: 10px;
+}
+
+@mixin gacha-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 55px;
+    background: #ba2b1d;
+    border-radius: 10px;
+    margin: 0 auto;
+}
