@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GachaUi from "../../assets/gacha_ui.png";
+---
+
+<style lang="scss">
+    @use "../../styles/mixin" as mixin;
+
+    .gacha_categry_wrap {
+        @include mixin.categry-btn-wrap;
+        a {
+            @include mixin.categry-btn-a;
+        }
+    }
+
+    .gacha {
+        img {
+            @include mixin.gacha;
+        }
+    }
+</style>
+
+<BaseLayout>
+    <h1>ジャンル</h1>
+    <div class="gacha_categry_wrap">
+        <a href="/gacha/1">運動</a>
+        <a href="">掃除</a>
+        <a href="">読書</a>
+        <a href="">料理</a>
+        <a href="">ストレッチ</a>
+    </div>
+    <div class="gacha">
+        <img src={GachaUi.src} alt="ガチャ" />
+    </div>
+</BaseLayout>
