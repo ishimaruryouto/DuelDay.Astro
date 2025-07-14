@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<style lang="scss">
+    @use "../../styles/mixin" as mixin;
+    .book_wrap {
+        @include mixin.book-wrap;
+
+        .categry {
+            @include mixin.book-categry;
+            a {
+                @include mixin.book-categry-a;
+                &:nth-child(4) {
+                    border-bottom: 2px solid tomato;
+                }
+            }
+        }
+        .batch {
+            @include mixin.batch;
+            .item {
+                @include mixin.batch-item;
+            }
+        }
+    }
+</style>
+
+<BaseLayout>
+    <h1>マイバッチ</h1>
+    <div class="book_wrap">
+        <div class="categry">
+            <a href="/book">運動</a>
+            <a href="/book/clean">掃除</a>
+            <a href="/book/read">読書</a>
+            <a href="#">料理</a>
+            <a href="/book/stretch">ストレッチ</a>
+        </div>
+
+        <div class="batch">
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+            <div class="item"></div>
+        </div>
+    </div>
+</BaseLayout>

@@ -52,7 +52,7 @@
     gap: 1rem;
     justify-content: left;
     margin-top: 65px;
-    margin-left: 15px;
+    // margin-left: 15px;
 }
 
 @mixin categry-btn-a {
@@ -98,4 +98,42 @@
     background: #ba2b1d;
     border-radius: 10px;
     margin: 0 auto;
+}
+
+@mixin book-wrap {
+    background: #3a4750;
+    border-radius: 20px;
+    padding-top: 20px;
+    margin-top: 30px;
+}
+
+@mixin book-categry {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 3rem;
+    justify-content: left;
+    width: 255px;
+    margin: 0 auto;
+    padding-bottom: 45px;
+}
+
+@mixin book-categry-a {
+    color: #fff;
+    font-size: 1.4rem;
+}
+
+@mixin batch {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    width: 255px;
+    padding-bottom: 75px;
+    margin: 0 auto;
+}
+
+@mixin batch-item {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
 }
