@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AddFriend from "../../assets/add_friend.png";
+import Hmiiyoshi from "../../assets/h.miyoshi.png";
+import Kyamagata from "../../assets/k.yamagata.png";
+import Rtomozuka from "../../assets/r.tomozuka.png";
+import Rmatuoka from "../../assets/r.matuoka.png";
+---
+
+<style lang="scss">
+    .add_friend {
+        display: flex;
+        span {
+        }
+        img {
+            width: 35px;
+            height: 35px;
+            background: #fff;
+        }
+    }
+    .card {
+        width: 100%;
+        height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: #3a4750;
+        border-radius: 15px;
+        margin-bottom: 30px;
+
+        img {
+            width: 50px;
+            height: 50px;
+        }
+        p {
+            color: #fff;
+            font-size: 1.4rem;
+            &:last-of-type {
+                font-weight: bold;
+            }
+        }
+        a {
+            color: #fff;
+            font-size: 0.8rem;
+            background: #ba2b1d;
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 70px;
+        }
+    }
+</style>
+
+<BaseLayout>
+    <div class="add_friend">
+        <h1>デュエル</h1>
+        <span class="line"></span>
+        <img src={AddFriend.src} alt="フレンド追加" />
+    </div>
+    <div class="card">
+        <img src={Hmiiyoshi.src} alt="バイク乗り" />
+        <div class="user_info">
+            <p>勝率30%</p>
+            <p>H.miyoshi</p>
+        </div>
+        <a href="">＋ベストフレンド</a>
+    </div>
+
+    <div class="card">
+        <img src={Kyamagata.src} alt="スポーツバイク" />
+        <div class="user_info">
+            <p>勝率60%</p>
+            <p>K.yamagata</p>
+        </div>
+        <a href="">＋ベストフレンド</a>
+    </div>
+
+    <div class="card">
+        <img src={Rtomozuka.src} alt="マッチョ男性" />
+        <div class="user_info">
+            <p>勝率40%</p>
+            <p>R.tomozuka</p>
+        </div>
+        <a href="">＋ベストフレンド</a>
+    </div>
+
+    <div class="card">
+        <img src={Rmatuoka.src} alt="バイク乗り" />
+        <div class="user_info">
+            <p>勝率80%</p>
+            <p>R.matuoka</p>
+        </div>
+        <a href="">＋ベストフレンド</a>
+    </div>
+</BaseLayout>
