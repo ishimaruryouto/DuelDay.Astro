@@ -9,118 +9,288 @@ import SOWD from "../../assets/sword.png";
 ---
 
 <style lang="scss">
-    .add_friend {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        // border: 1px solid tomato;
-        h1 {
-            margin-bottom: 30px;
+    .none_wrap {
+        position: relative;
+        padding: 0 5%;
+
+        &.blur {
+            filter: blur(5px);
         }
-        span {
-            width: 1px;
-            height: 40px;
-            background: #fff;
-            margin-top: 80px;
-            margin-left: 160px;
-        }
-        a {
+
+        /* ヘッダー／友だち追加ボタン */
+        .add_friend {
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            background: #fff;
-            margin-top: 80px;
-            border-radius: 10px;
+            justify-content: space-between;
+
+            h1 {
+                margin-bottom: 30px;
+            }
+            span {
+                width: 1px;
+                height: 40px;
+                background: #fff;
+                margin-top: 80px;
+                margin-left: 120px;
+            }
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+                background: #fff;
+                margin-top: 80px;
+                border-radius: 10px;
+
+                img {
+                    width: 35px;
+                    height: 35px;
+                }
+            }
+        }
+
+        /* 対戦カード */
+        .card {
+            width: 100%;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: #3a4750;
+            border-radius: 15px;
+            margin-bottom: 30px;
+
             img {
-                width: 35px;
-                height: 35px;
+                width: 50px;
+                height: 50px;
+            }
+            p {
+                color: #fff;
+                font-size: 1rem;
+                &:last-of-type {
+                    font-weight: bold;
+                }
+            }
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-size: 0.8rem;
+                background: #ba2b1d;
+                padding: 5px 10px;
+                border-radius: 5px;
+                margin-top: 70px;
+
+                &::before {
+                    content: "";
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    background-image: url("../../assets/sword.png");
+                    background-size: cover;
+                }
             }
         }
     }
-    .card {
-        width: 100%;
-        height: 110px;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
+    /* モーダル本体 */
+    .modal_wrap {
+        position: absolute;
+        top: 190px;
+        left: 5%;
+        display: none;
+        width: 90%;
+        height: 250px;
         background: #3a4750;
         border-radius: 15px;
-        margin-bottom: 30px;
+        // border: 1px solid tomato;
 
-        img {
-            width: 50px;
-            height: 50px;
+        &.visible {
+            display: block;
         }
-        p {
-            color: #fff;
-            font-size: 1rem;
-            &:last-of-type {
-                font-weight: bold;
-            }
-        }
-        a {
+
+        .modal_card {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-size: 0.8rem;
-            background: #ba2b1d;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin-top: 70px;
-            &::before {
-                content: "";
-                display: inline-block;
-                width: 20px;
-                height: 20px;
-                background-image: url("../../assets/sword.png");
-                background-size: cover;
+            padding-top: 30px;
+            gap: 40px;
+
+            img {
+                display: block;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                // border: 1px solid tomato;
             }
+            p {
+                color: #fff;
+                font-size: 1rem;
+                &:last-child {
+                    font-size: 1.4rem;
+                }
+            }
+        }
+
+        button {
+            display: block;
+            margin: 40px auto 0;
+            padding: 5px 10px;
+            font-size: 2rem;
+            background: #ba2b1d;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
         }
     }
 </style>
 
 <BaseLayout>
-    <div class="add_friend">
-        <h1>デュエル</h1>
-        <span class="line"></span>
-        <a href=""><img src={AddFriend.src} alt="フレンド追加" /></a>
-    </div>
-    <div class="card">
-        <img src={Hmiiyoshi.src} alt="バイク乗り" />
-        <div class="user_info">
-            <p>勝率30%</p>
-            <p>H.miyoshi</p>
+    <div class="none_wrap">
+        <div class="add_friend">
+            <h1>デュエル</h1>
+            <span class="line"></span>
+            <a href=""><img src={AddFriend.src} alt="フレンド追加" /></a>
         </div>
-        <a href="">対戦</a>
+        <div class="card">
+            <img src={Hmiiyoshi.src} alt="バイク乗り" />
+            <div class="user_info">
+                <p>勝率30%</p>
+                <p>H.miyoshi</p>
+            </div>
+            <a href="">対戦</a>
+        </div>
+
+        <div class="card">
+            <img src={Kyamagata.src} alt="スポーツバイク" />
+            <div class="user_info">
+                <p>勝率60%</p>
+                <p>K.yamagata</p>
+            </div>
+            <a href="">対戦</a>
+        </div>
+
+        <div class="card">
+            <img src={Rtomozuka.src} alt="マッチョ男性" />
+            <div class="user_info">
+                <p>勝率40%</p>
+                <p>R.tomozuka</p>
+            </div>
+            <a href="">対戦</a>
+        </div>
+
+        <div class="card">
+            <img src={Rmatuoka.src} alt="バイク乗り" />
+            <div class="user_info">
+                <p>勝率80%</p>
+                <p>R.matuoka</p>
+            </div>
+            <a href="">対戦</a>
+        </div>
     </div>
 
-    <div class="card">
-        <img src={Kyamagata.src} alt="スポーツバイク" />
-        <div class="user_info">
-            <p>勝率60%</p>
-            <p>K.yamagata</p>
+    <div class="modal_wrap">
+        <div class="modal_card">
+            <img class="duel_modal_img" src="" alt="相手のアバター" />
+            <div class="duel_modal_info">
+                <p class="duel_modal_winrate">勝率：30%</p>
+                <p class="duel_modal_name">H.miyoshi</p>
+            </div>
         </div>
-        <a href="">対戦</a>
-    </div>
-
-    <div class="card">
-        <img src={Rtomozuka.src} alt="マッチョ男性" />
-        <div class="user_info">
-            <p>勝率40%</p>
-            <p>R.tomozuka</p>
-        </div>
-        <a href="">対戦</a>
-    </div>
-
-    <div class="card">
-        <img src={Rmatuoka.src} alt="バイク乗り" />
-        <div class="user_info">
-            <p>勝率80%</p>
-            <p>R.matuoka</p>
-        </div>
-        <a href="">対戦</a>
+        <button class="duel_modal_action">対戦を申し込む</button>
     </div>
 </BaseLayout>
+
+<!-- <script type="module">
+    // モーダルと背景ぼかしの要素を取得
+    const modal = document.querySelector(".modal_wrap");
+    const closeBtn = modal?.querySelector("button");
+    const noneWrap = document.querySelector(".none_wrap");
+    // 各カードの「対戦」リンクを取得
+    const duelBtns = document.querySelectorAll(".card a");
+
+    duelBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            // モーダルを表示して背景をぼかす
+            modal?.classList.add("visible");
+            noneWrap?.classList.add("blur");
+        });
+    });
+
+    // モーダル内の閉じるボタンで非表示に戻す
+    closeBtn?.addEventListener("click", () => {
+        modal?.classList.remove("visible");
+        noneWrap?.classList.remove("blur");
+    });
+
+    // モーダル外をクリックしても閉じる（オプション）
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.remove("visible");
+            noneWrap?.classList.remove("blur");
+        }
+    });
+</script> -->
+
+<script type="module">
+    // モーダルと背景ぼかしの要素を取得
+    const modal = document.querySelector(".modal_wrap");
+    const closeBtn = modal?.querySelector("button");
+    const noneWrap = document.querySelector(".none_wrap");
+    const duelBtns = document.querySelectorAll(".card a");
+
+    // モーダル内の内容を差し替える要素
+    const modalImg = document.querySelector(".duel_modal_img");
+    const modalWinrate = document.querySelector(".duel_modal_winrate");
+    const modalName = document.querySelector(".duel_modal_name");
+
+    duelBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            // 押されたボタンの親 .card を取得
+            const card = btn.closest(".card");
+            if (
+                !card ||
+                !modal ||
+                !noneWrap ||
+                !modalImg ||
+                !modalWinrate ||
+                !modalName
+            )
+                return;
+
+            // カード内の img と user_info の p 要素を取得
+            const avatarEl = card.querySelector("img");
+            const winrateEl = card.querySelector(".user_info p:first-child");
+            const nameEl = card.querySelector(".user_info p:last-child");
+            if (!avatarEl || !winrateEl || !nameEl) return;
+
+            // モーダルにセット
+            modalImg.src = avatarEl.src;
+            modalImg.alt = nameEl.textContent || "";
+            modalWinrate.textContent = winrateEl.textContent || "";
+            modalName.textContent = nameEl.textContent || "";
+
+            // モーダル表示＋背景をぼかす
+            modal.classList.add("visible");
+            noneWrap.classList.add("blur");
+        });
+    });
+
+    // モーダル内の閉じるボタン
+    closeBtn?.addEventListener("click", () => {
+        modal?.classList.remove("visible");
+        noneWrap?.classList.remove("blur");
+    });
+
+    // オーバーレイクリックで閉じる
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.remove("visible");
+            noneWrap?.classList.remove("blur");
+        }
+    });
+</script>
