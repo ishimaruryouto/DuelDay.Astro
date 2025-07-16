@@ -5,17 +5,38 @@ import Hmiiyoshi from "../../assets/h.miyoshi.png";
 import Kyamagata from "../../assets/k.yamagata.png";
 import Rtomozuka from "../../assets/r.tomozuka.png";
 import Rmatuoka from "../../assets/r.matuoka.png";
+import SOWD from "../../assets/sword.png";
 ---
 
 <style lang="scss">
     .add_friend {
         display: flex;
-        span {
+        align-items: center;
+        justify-content: space-between;
+        // border: 1px solid tomato;
+        h1 {
+            margin-bottom: 30px;
         }
-        img {
-            width: 35px;
-            height: 35px;
+        span {
+            width: 1px;
+            height: 40px;
             background: #fff;
+            margin-top: 80px;
+            margin-left: 160px;
+        }
+        a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: #fff;
+            margin-top: 80px;
+            border-radius: 10px;
+            img {
+                width: 35px;
+                height: 35px;
+            }
         }
     }
     .card {
@@ -34,18 +55,29 @@ import Rmatuoka from "../../assets/r.matuoka.png";
         }
         p {
             color: #fff;
-            font-size: 1.4rem;
+            font-size: 1rem;
             &:last-of-type {
                 font-weight: bold;
             }
         }
         a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #fff;
             font-size: 0.8rem;
             background: #ba2b1d;
-            padding: 5px;
+            padding: 5px 10px;
             border-radius: 5px;
             margin-top: 70px;
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                background-image: url("../../assets/sword.png");
+                background-size: cover;
+            }
         }
     }
 </style>
@@ -54,7 +86,7 @@ import Rmatuoka from "../../assets/r.matuoka.png";
     <div class="add_friend">
         <h1>デュエル</h1>
         <span class="line"></span>
-        <img src={AddFriend.src} alt="フレンド追加" />
+        <a href=""><img src={AddFriend.src} alt="フレンド追加" /></a>
     </div>
     <div class="card">
         <img src={Hmiiyoshi.src} alt="バイク乗り" />
@@ -62,7 +94,7 @@ import Rmatuoka from "../../assets/r.matuoka.png";
             <p>勝率30%</p>
             <p>H.miyoshi</p>
         </div>
-        <a href="">＋ベストフレンド</a>
+        <a href="">対戦</a>
     </div>
 
     <div class="card">
@@ -71,7 +103,7 @@ import Rmatuoka from "../../assets/r.matuoka.png";
             <p>勝率60%</p>
             <p>K.yamagata</p>
         </div>
-        <a href="">＋ベストフレンド</a>
+        <a href="">対戦</a>
     </div>
 
     <div class="card">
@@ -80,7 +112,7 @@ import Rmatuoka from "../../assets/r.matuoka.png";
             <p>勝率40%</p>
             <p>R.tomozuka</p>
         </div>
-        <a href="">＋ベストフレンド</a>
+        <a href="">対戦</a>
     </div>
 
     <div class="card">
@@ -89,6 +121,6 @@ import Rmatuoka from "../../assets/r.matuoka.png";
             <p>勝率80%</p>
             <p>R.matuoka</p>
         </div>
-        <a href="">＋ベストフレンド</a>
+        <a href="">対戦</a>
     </div>
 </BaseLayout>
