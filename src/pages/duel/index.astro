@@ -202,38 +202,6 @@ import SOWD from "../../assets/sword.png";
     </div>
 </BaseLayout>
 
-<!-- <script type="module">
-    // モーダルと背景ぼかしの要素を取得
-    const modal = document.querySelector(".modal_wrap");
-    const closeBtn = modal?.querySelector("button");
-    const noneWrap = document.querySelector(".none_wrap");
-    // 各カードの「対戦」リンクを取得
-    const duelBtns = document.querySelectorAll(".card a");
-
-    duelBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-            e.preventDefault();
-            // モーダルを表示して背景をぼかす
-            modal?.classList.add("visible");
-            noneWrap?.classList.add("blur");
-        });
-    });
-
-    // モーダル内の閉じるボタンで非表示に戻す
-    closeBtn?.addEventListener("click", () => {
-        modal?.classList.remove("visible");
-        noneWrap?.classList.remove("blur");
-    });
-
-    // モーダル外をクリックしても閉じる（オプション）
-    modal?.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.classList.remove("visible");
-            noneWrap?.classList.remove("blur");
-        }
-    });
-</script> -->
-
 <script type="module">
     // モーダルと背景ぼかしの要素を取得
     const modal = document.querySelector(".modal_wrap");
@@ -245,6 +213,7 @@ import SOWD from "../../assets/sword.png";
     const modalImg = document.querySelector(".duel_modal_img");
     const modalWinrate = document.querySelector(".duel_modal_winrate");
     const modalName = document.querySelector(".duel_modal_name");
+    const actionBtn = document.querySelector(".duel_modal_action");
 
     duelBtns.forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -266,6 +235,7 @@ import SOWD from "../../assets/sword.png";
             const avatarEl = card.querySelector("img");
             const winrateEl = card.querySelector(".user_info p:first-child");
             const nameEl = card.querySelector(".user_info p:last-child");
+
             if (!avatarEl || !winrateEl || !nameEl) return;
 
             // モーダルにセット
@@ -273,6 +243,13 @@ import SOWD from "../../assets/sword.png";
             modalImg.alt = nameEl.textContent || "";
             modalWinrate.textContent = winrateEl.textContent || "";
             modalName.textContent = nameEl.textContent || "";
+
+            actionBtn.onclick = () => {
+                const opponentId = encodeURIComponent(
+                    nameEl.textContent.trim(),
+                );
+                window.location.href = `/duel/${opponentId}`;
+            };
 
             // モーダル表示＋背景をぼかす
             modal.classList.add("visible");

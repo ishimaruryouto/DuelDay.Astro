@@ -1,0 +1,72 @@
+---
+// @ts-nocheck
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { db } from "../../firebase/client.js";
+import { doc, getDoc } from "firebase/firestore";
+
+const opponents = ["H.miyoshi", "K.yamagata", "R.tomozuka", "R.matuoka"];
+
+export function getStaticPaths() {
+    return [
+        { params: { opponent: "H.miyoshi" } },
+        { params: { opponent: "K.yamagata" } },
+        { params: { opponent: "R.tomozuka" } },
+        { params: { opponent: "R.matuoka" } },
+    ];
+}
+
+// 運動
+const exerciseRef = doc(db, "todoCategories", "exercise");
+const exerciseSnap = await getDoc(exerciseRef);
+const exerciseItems = exerciseSnap.exists() ? exerciseSnap.data().items : [];
+
+// 掃除
+const cleaningRef = doc(db, "todoCategories", "cleaning");
+const cleaningSnap = await getDoc(cleaningRef);
+const cleaningItems = cleaningSnap.exists() ? cleaningSnap.data().items : [];
+
+// 料理
+const cookRef = doc(db, "todoCategories", "cook");
+const cookSnap = await getDoc(cookRef);
+const cookItems = cookSnap.exists() ? cookSnap.data().items : [];
+
+// 読書
+const readRef = doc(db, "todoCategories", "read");
+const readSnap = await getDoc(readRef);
+const readItems = readSnap.exists() ? readSnap.data().items : [];
+
+// ストレッチ
+const stretchRef = doc(db, "todoCategories", "stretch");
+const stretchSnap = await getDoc(stretchRef);
+const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
+---
+
+<style lang="scss">
+    .todo_choose {
+        width: 100%;
+        nav {
+            width: 100%;
+            height: 100%;
+            button {
+            }
+        }
+    }
+</style>
+
+<BaseLayout>
+    <h1>ToDo内容決め</h1>
+    <p>あなたのターン</p>
+    <div class="todo_choose">
+        <nav>
+            <button data-cat="exercise">運動</button>
+            <button data-cat="cleaning">掃除</button>
+            <button data-cat="read">読書</button>
+            <button data-cat="cook">料理</button>
+            <button data-cat="stretch">ストレッチ</button>
+        </nav>
+    </div>
+
+    <ul>
+        {exerciseItems.map((item) => <li data-id={item.id}>{item.label}</li>)}
+    </ul>
+</BaseLayout>
