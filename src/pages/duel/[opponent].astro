@@ -101,6 +101,38 @@ const { opponent } = Astro.params;
             cursor: pointer;
         }
     }
+
+    .modal_overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba($color: #000000, $alpha: 0.6);
+        display: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        .modal_content {
+            background: #3a4750;
+            padding: 20px 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        p {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+        }
+        button {
+            color: #fff;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            background: #ba2b1d;
+            border-radius: 5px;
+        }
+    }
 </style>
 
 <BaseLayout>
@@ -169,6 +201,13 @@ const { opponent } = Astro.params;
             ))
         }
     </ul>
+
+    <div id="battleModal" class="modal_overlay">
+        <div class="modal_content">
+            <p>バトルに進みますか？</p>
+            <button id="modalProceed">進む</button>
+        </div>
+    </div>
 </BaseLayout>
 
 <script type="module">
@@ -191,6 +230,8 @@ const { opponent } = Astro.params;
     const allBoxes = Array.from(
         document.querySelectorAll('input[type="checkbox"]'),
     );
+    const battleModal = document.getElementById("battleModal");
+    const modalProceed = document.getElementById("modalProceed");
     allBoxes.forEach((box) => {
         box.addEventListener("change", () => {
             const totalChecked = allBoxes.filter((b) => b.checked).length;
@@ -198,7 +239,20 @@ const { opponent } = Astro.params;
                 // ４つ目以降はチェックを戻す
                 box.checked = false;
                 alert("選択は３つまでです");
+            } else if (totalChecked === 3) {
+                battleModal.style.display = "flex";
             }
         });
+    });
+
+    modalProceed.addEventListener("click", () => {
+        battleModal.style.display = "none";
+        window.location.href = `/duel/${encodeURIComponent(opponent)}`;
+    });
+
+    battleModal.addEventListener("click", (e) => {
+        if (e.target === battleModal) {
+            battleModal.style.display = "none";
+        }
     });
 </script>
