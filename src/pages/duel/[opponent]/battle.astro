@@ -1,0 +1,92 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { rdb } from "../../../firebase/client";
+import { ref, get } from "firebase/database";
+
+// --- 必須: 動的ルート用 getStaticPaths ---
+export function getStaticPaths() {
+    return [
+        { params: { opponent: "H.miyoshi" } },
+        { params: { opponent: "K.yamagata" } },
+        { params: { opponent: "R.tomozuka" } },
+        { params: { opponent: "R.matuoka" } },
+    ];
+}
+
+// --- パス・クエリ取得 ---
+const { opponent } = Astro.params;
+const url = Astro.request.url; // Astro 3系以降
+const searchParams = new URL(url).searchParams;
+const myId = searchParams.get("user") || "testUser1";
+const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
+
+// --- DBから両者の配列取得 ---
+let userTodos: string[] = [];
+let opponentTodos: string[] = [];
+try {
+    const mySnap = await get(ref(rdb, `duels/${opponent}/${myId}`));
+    const oppSnap = await get(ref(rdb, `duels/${opponent}/${opponentId}`));
+    userTodos = mySnap.exists() ? mySnap.val() : [];
+    opponentTodos = oppSnap.exists() ? oppSnap.val() : [];
+} catch {
+    userTodos = [];
+    opponentTodos = [];
+}
+---
+
+<BaseLayout>
+    <h1>バトル内容発表</h1>
+    <h2>あなたのToDo</h2>
+    <ul>
+        {
+            userTodos.length > 0 ? (
+                userTodos.map((todo) => <li>{todo}</li>)
+            ) : (
+                <li>（未選択）</li>
+            )
+        }
+    </ul>
+    <h2>相手のToDo</h2>
+    <ul>
+        {
+            opponentTodos.length > 0 ? (
+                opponentTodos.map((todo) => <li>{todo}</li>)
+            ) : (
+                <li>（未選択）</li>
+            )
+        }
+    </ul>
+    <button class="battle-btn">バトル開始</button>
+    <!-- デバッグ用表示（本番は消してOK） -->
+    <pre
+        style="color:white; background:#222; font-size:1rem; padding:12px;">
+        {JSON.stringify({ myId, opponentId, opponent, userTodos, opponentTodos }, null, 2)}
+    </pre>
+</BaseLayout>
+
+<style>
+    .battle-btn {
+        margin-top: 2rem;
+        width: 90%;
+        max-width: 300px;
+        font-size: 1.5rem;
+        padding: 1rem 0;
+        background: #ba2b1d;
+        border-radius: 12px;
+        color: #fff;
+        border: none;
+        font-weight: bold;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    h2 {
+        color: #fff;
+        margin: 1.2rem 0 0.2rem;
+        font-size: 1.3rem;
+    }
+    ul {
+        color: #fff;
+        margin-bottom: 1.2rem;
+    }
+</style>

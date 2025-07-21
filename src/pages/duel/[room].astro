@@ -1,0 +1,394 @@
+---
+// @ts-nocheck
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { db } from "../../firebase/client.js";
+import { doc, getDoc } from "firebase/firestore";
+import "../../styles/main.scss";
+
+// ── ❶ Static Paths を room ベースに
+export function getStaticPaths() {
+    return [{ params: { room: "room123" } }, { params: { room: "testroom" } }];
+}
+const { room } = Astro.params;
+
+// ── ❷ Firestore から ToDo カテゴリを SSR で取得
+const exerciseSnap = await getDoc(doc(db, "todoCategories", "exercise"));
+const exerciseItems = exerciseSnap.exists() ? exerciseSnap.data().items : [];
+
+const cleaningSnap = await getDoc(doc(db, "todoCategories", "cleaning"));
+const cleaningItems = cleaningSnap.exists() ? cleaningSnap.data().items : [];
+
+const readSnap = await getDoc(doc(db, "todoCategories", "read"));
+const readItems = readSnap.exists() ? readSnap.data().items : [];
+
+const cookSnap = await getDoc(doc(db, "todoCategories", "cook"));
+const cookItems = cookSnap.exists() ? cookSnap.data().items : [];
+
+const stretchSnap = await getDoc(doc(db, "todoCategories", "stretch"));
+const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
+---
+
+<style lang="scss">
+    @use "../../styles/_mixin.scss" as mixin;
+
+    p {
+        color: #fff;
+        font-size: 1.4rem;
+        margin-top: 40px;
+    }
+
+    .choose_nav {
+        @include mixin.categry-btn-wrap;
+        button {
+            @include mixin.categry-btn-a;
+        }
+        button.active {
+            background: #f39c12;
+        }
+    }
+
+    .todo_list {
+        list-style: none;
+        margin: 1rem 0;
+        padding: 0;
+        display: none;
+        &[data-cat].active {
+            display: block;
+        }
+    }
+
+    .todo_list li {
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        color: #fff;
+        font-size: 1.2rem;
+        line-height: 2.5;
+
+        input {
+            position: relative;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50px;
+            background: #3a4750;
+
+            &:checked::after {
+                content: "";
+                position: absolute;
+                top: -1px;
+                left: 4px;
+                width: 20px;
+                height: 10px;
+                border-bottom: 3px solid #48b02c;
+                border-left: 3px solid #48b02c;
+                transform: rotate(-45deg);
+            }
+        }
+        label {
+            padding-left: 20px;
+            cursor: pointer;
+        }
+    }
+
+    .modal_overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(#000, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+
+        &.visible {
+            display: flex;
+        }
+
+        .modal_content {
+            background: #3a4750;
+            padding: 20px 25px;
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+
+            p {
+                margin-bottom: 24px;
+                font-size: 1.4rem;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 1.2rem;
+                background: #ba2b1d;
+                border-radius: 5px;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+        }
+    }
+</style>
+
+<BaseLayout>
+    <h1>ルーム: {room}</h1>
+    <p>あなたのターン</p>
+
+    <!-- カテゴリ切り替え -->
+    <nav class="choose_nav">
+        <button data-cat="exercise" class="active">運動</button>
+        <button data-cat="cleaning">掃除</button>
+        <button data-cat="read">読書</button>
+        <button data-cat="cook">料理</button>
+        <button data-cat="stretch">ストレッチ</button>
+    </nav>
+
+    <!-- SSR で出力する各リスト -->
+    <ul class="todo_list active" data-cat="exercise">
+        {
+            exerciseItems.map((item) => (
+                <li key={item.id}>
+                    <input type="checkbox" id={`todo-ex-${item.id}`} />
+                    <label for={`todo-ex-${item.id}`}>{item.label}</label>
+                </li>
+            ))
+        }
+    </ul>
+    <ul class="todo_list" data-cat="cleaning">
+        {
+            cleaningItems.map((item) => (
+                <li key={item.id}>
+                    <input type="checkbox" id={`todo-cl-${item.id}`} />
+                    <label for={`todo-cl-${item.id}`}>{item.label}</label>
+                </li>
+            ))
+        }
+    </ul>
+    <ul class="todo_list" data-cat="read">
+        {
+            readItems.map((item) => (
+                <li key={item.id}>
+                    <input type="checkbox" id={`todo-re-${item.id}`} />
+                    <label for={`todo-re-${item.id}`}>{item.label}</label>
+                </li>
+            ))
+        }
+    </ul>
+    <ul class="todo_list" data-cat="cook">
+        {
+            cookItems.map((item) => (
+                <li key={item.id}>
+                    <input type="checkbox" id={`todo-co-${item.id}`} />
+                    <label for={`todo-co-${item.id}`}>{item.label}</label>
+                </li>
+            ))
+        }
+    </ul>
+    <ul class="todo_list" data-cat="stretch">
+        {
+            stretchItems.map((item) => (
+                <li key={item.id}>
+                    <input type="checkbox" id={`todo-st-${item.id}`} />
+                    <label for={`todo-st-${item.id}`}>{item.label}</label>
+                </li>
+            ))
+        }
+    </ul>
+
+    <!-- ❸ モーダル -->
+    <div id="battleModal" class="modal_overlay">
+        <div class="modal_content">
+            <p>バトルに進みますか？</p>
+            <button id="modalProceed">進む</button>
+        </div>
+    </div>
+</BaseLayout>
+
+<!-- <script type="module">
+    // ❹ Astro.params.room を埋め込む
+    const roomParam = `${JSON.stringify(room)}`;
+    // クエリパラメータ ?me=alice などでプレイヤーを特定
+    const meId = new URL(location.href).searchParams.get("me") ?? "guest";
+
+    // Firebase CDN モジュールを使って RTDB 初期化
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+        getDatabase,
+        ref,
+        set,
+        onValue,
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+        authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
+        databaseURL: import.meta.env.PUBLIC_FIREBASE_DATABASE_URL,
+    };
+    const app = initializeApp(firebaseConfig);
+    const rdb = getDatabase(app);
+
+    // カテゴリ & リスト切り替え
+    const navBtns = document.querySelectorAll(".choose_nav button");
+    const lists = document.querySelectorAll(".todo_list");
+    navBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const cat = btn.dataset.cat;
+            navBtns.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            lists.forEach((ul) => {
+                ul.dataset.cat === cat
+                    ? ul.classList.add("active")
+                    : ul.classList.remove("active");
+            });
+        });
+    });
+
+    // チェックボックス監視 → 3つ選んだらモーダル表示
+    const allBoxes = Array.from(
+        document.querySelectorAll('input[type="checkbox"]'),
+    );
+    const battleModal = document.getElementById("battleModal");
+    const modalProceed = document.getElementById("modalProceed");
+
+    allBoxes.forEach((box) => {
+        box.addEventListener("change", () => {
+            const count = allBoxes.filter((b) => b.checked).length;
+            if (count > 3) {
+                box.checked = false;
+                alert("選択は３つまでです");
+            } else if (count === 3) {
+                battleModal.classList.add("visible");
+            }
+        });
+    });
+
+    // “進む” ボタンで RTDB に書き込み
+    modalProceed.addEventListener("click", () => {
+        battleModal.classList.remove("visible");
+        // 選択 ID の配列
+        const selected = allBoxes.filter((b) => b.checked).map((b) => b.id);
+
+        // rooms/{room}/selections/{meId}
+        set(ref(rdb, `rooms/${roomParam}/selections/${meId}`), selected).catch(
+            (err) => {
+                console.error("Failed to write:", err);
+                alert("通信エラーが発生しました");
+            },
+        );
+
+        // (オプション) 相手の選択を監視して両者そろったら画面遷移
+        onValue(ref(rdb, `rooms/${roomParam}/selections`), (snap) => {
+            const data = snap.val() || {};
+            const players = Object.keys(data);
+            // 両者（guest と例えば 'alice'）が選択済みかチェック
+            if (
+                players.length >= 2 &&
+                players.every(
+                    (id) => Array.isArray(data[id]) && data[id].length === 3,
+                )
+            ) {
+                location.href = `/duel/${encodeURIComponent(roomParam)}/battle`;
+            }
+        });
+    });
+
+    // モーダル外クリックで閉じる
+    battleModal.addEventListener("click", (e) => {
+        if (e.target === battleModal) {
+            battleModal.classList.remove("visible");
+        }
+    });
+</script> -->
+
+<script type="module">
+    // ❹ サーバーサイドの room をビルド時に文字列リテラルとして埋め込む
+    const roomParam = "{room}";
+    // クエリパラメータ ?me=alice などで自分を特定
+    const meId = new URL(location.href).searchParams.get("me") ?? "guest";
+    import { rdb } from "../../firebase/client.js";
+    import { ref, set, onValue } from "firebase/database";
+    // ① Firebase CDN モジュールをインポート
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    // import { getDatabase } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    // ② Firebase の設定（環境変数 or Astro の public 環境変数を使う）
+    const app = initializeApp(firebaseConfig);
+    // const rdb = getDatabase(app);
+
+    // ❺ DOM 要素を取得
+    const navBtns = document.querySelectorAll(".choose_nav button");
+    const lists = document.querySelectorAll(".todo_list");
+    const allBoxes = Array.from(
+        document.querySelectorAll('input[type="checkbox"]'),
+    );
+    const battleModal = document.getElementById("battleModal");
+    const btnProceed = document.getElementById("modalProceed");
+
+    // カテゴリ切り替え
+    navBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const cat = btn.dataset.cat;
+            navBtns.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            lists.forEach((ul) => {
+                ul.dataset.cat === cat
+                    ? ul.classList.add("active")
+                    : ul.classList.remove("active");
+            });
+        });
+    });
+
+    // チェックボックス監視 → 3つ選んだらモーダル表示
+    allBoxes.forEach((box) => {
+        box.addEventListener("change", () => {
+            const count = allBoxes.filter((b) => b.checked).length;
+            if (count > 3) {
+                box.checked = false;
+                alert("選択は３つまでです");
+            } else if (count === 3) {
+                battleModal.classList.add("visible");
+            }
+        });
+    });
+
+    // モーダル「進む」ボタン
+    btnProceed.addEventListener("click", () => {
+        battleModal.classList.remove("visible");
+        // 選択済み ID の配列を作成
+        const selected = allBoxes.filter((b) => b.checked).map((b) => b.id);
+
+        // rooms/{roomParam}/selections/{meId} に書き込み
+        set(ref(rdb, `rooms/${roomParam}/selections/${meId}`), selected).catch(
+            (err) => {
+                console.error("書き込みに失敗しました:", err);
+                alert("通信エラーが発生しました");
+            },
+        );
+
+        // 相手の選択がそろったら /battle へ遷移
+        onValue(ref(rdb, `rooms/${roomParam}/selections`), (snap) => {
+            const data = snap.val() || {};
+            const players = Object.keys(data);
+            if (
+                players.length >= 2 &&
+                players.every(
+                    (id) => Array.isArray(data[id]) && data[id].length === 3,
+                )
+            ) {
+                location.href = `/duel/${encodeURIComponent(roomParam)}/battle`;
+            }
+        });
+    });
+
+    // モーダル外クリックで閉じる
+    battleModal.addEventListener("click", (e) => {
+        if (e.target === battleModal) {
+            battleModal.classList.remove("visible");
+        }
+    });
+</script>
