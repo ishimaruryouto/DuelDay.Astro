@@ -1,0 +1,122 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+// 仮データ。実際はactive.astroからクエリ/DB経由で取得する想定
+const myTodos = [
+    { label: "玄関の床の拭き掃除", checked: true },
+    { label: "朝食セットをつくる", checked: true },
+    { label: "ゴミをまとめる", checked: false },
+];
+const oppTodos = [
+    { label: "ランニング：20分", checked: false },
+    { label: "腕立て：30回", checked: true },
+    { label: "小説を5ページ読む", checked: false },
+];
+
+// HP計算（20点ごと減点、初期100）
+const calcHP = (todos: { checked: boolean }[]) =>
+    100 - todos.filter((t: { checked: boolean }) => !t.checked).length * 20;
+const myHP = calcHP(myTodos);
+const oppHP = calcHP(oppTodos);
+
+// 勝者判定
+let winner: "draw" | "me" | "opp" = "draw";
+if (myHP > oppHP) winner = "me";
+if (myHP < oppHP) winner = "opp";
+---
+
+<style lang="scss">
+    .result-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin: 2rem 0;
+        .player {
+            flex: 1;
+            color: #fff;
+            text-align: center;
+            h2 {
+                font-size: 1.7rem;
+                margin-bottom: 1rem;
+            }
+            .bar {
+                width: 110px;
+                height: 22px;
+                border-radius: 12px;
+                margin: 0.7rem auto;
+                background: #ddd;
+                &.green {
+                    background: #19df5b;
+                }
+                &.gray {
+                    background: #bbb;
+                    border: 3px dotted #fff;
+                }
+            }
+            .winner {
+                margin-top: 1.3rem;
+                color: #ffbc2e;
+                font-size: 2rem;
+                font-weight: bold;
+                text-align: left;
+                .crown {
+                    font-size: 2.3rem;
+                    vertical-align: middle;
+                }
+                span {
+                    font-size: 2.1rem;
+                    border-bottom: 4px solid #ffbc2e;
+                }
+            }
+        }
+    }
+    .end-btn {
+        display: block;
+        margin: 2rem auto 0;
+        background: #ba2b1d;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        padding: 0.7rem 2.5rem;
+        font-weight: bold;
+    }
+</style>
+
+<BaseLayout>
+    <div class="result-wrap">
+        <div class="player player-self">
+            <h1>自分</h1>
+            <div>残りHP{myHP}</div>
+            <div class={`bar ${myHP > 0 ? "green" : "gray"}`}></div>
+            {
+                winner === "me" && (
+                    <div class="winner">
+                        <span class="crown">👑</span>
+                        <span>Winner</span>
+                    </div>
+                )
+            }
+        </div>
+        <div class="player player-opponent">
+            <h1>相手</h1>
+            <div>残りHP{oppHP}</div>
+            <div class={`bar ${oppHP > 0 ? "green" : "gray"}`}></div>
+            {
+                winner === "opp" && (
+                    <div class="winner">
+                        <span class="crown">👑</span>
+                        <span>Winner</span>
+                    </div>
+                )
+            }
+        </div>
+    </div>
+    <button id="endBtn" class="end-btn">デュエル終了</button>
+</BaseLayout>
+
+<script>
+    document.getElementById("endBtn")?.addEventListener("click", () => {
+        window.location.href = "/";
+    });
+</script>

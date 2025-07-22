@@ -1,0 +1,140 @@
+---
+// src/pages/duel/[opponent]/duel.astro などで新規作成！
+
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+const { opponent } = Astro.params;
+const url = Astro.request.url;
+const searchParams = new URL(url).searchParams;
+const myId = searchParams.get("user") || "testUser1";
+---
+
+<style lang="scss">
+    @use "../../../styles//mixin" as mixin;
+
+    .duel-wrap {
+        display: flex;
+        gap: 2rem;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .player {
+        flex: 1;
+        padding: 1.2rem 0.4rem;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        h2 {
+            font-size: 1.7rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .todo-list {
+            p {
+                margin: 0.3rem 0 0.7rem;
+                font-size: 1.1rem;
+                text-align: left;
+            }
+        }
+
+        .status {
+            margin: 20px;
+            text-align: left;
+
+            span {
+                display: block;
+                font-size: 1.1rem;
+                margin-bottom: 0.1rem;
+            }
+
+            .bar {
+                width: 100px;
+                height: 16px;
+                border-radius: 8px;
+
+                &.green {
+                    background: #19df5b;
+                }
+                &.red {
+                    background: #e34747;
+                }
+            }
+        }
+
+        .todo-mini {
+            p {
+                font-size: 1.1rem;
+                color: #fff;
+                margin-bottom: 0.5rem;
+                text-align: left;
+            }
+        }
+    }
+
+    .duel-btn {
+        display: block;
+        margin: 2rem auto 0;
+        background: #ba2b1d;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        padding: 0.7rem 2.5rem;
+        font-weight: bold;
+    }
+</style>
+
+<BaseLayout>
+    <div class="duel-wrap">
+        <section class="player player-self">
+            <h1>自分</h1>
+            <div class="todo-list">
+                <p>玄関の床の拭き掃除<br />朝食セットをつくる</p>
+            </div>
+            <div class="status"></div>
+            <div class="todo-mini">
+                <p>腕立て：30回<br />ランニング：20分</p>
+            </div>
+            <span>HP+20</span>
+            <div class="bar green"></div>
+            <div class="status">
+                <span>攻撃+20</span>
+                <div class="bar red"></div>
+            </div>
+            <div class="status">
+                <span>残りHP100</span>
+                <div class="bar green"></div>
+            </div>
+        </section>
+        <section class="player player-opponent">
+            <h1>相手</h1>
+            <div class="todo-list">
+                <p>ゴミをまとめる</p>
+            </div>
+            <div class="status">
+                <span>HP+10</span>
+                <div class="bar green"></div>
+            </div>
+            <div class="todo-mini">
+                <p>腕立て：30回<br />ランニング：20分</p>
+            </div>
+            <div class="status">
+                <span>攻撃+20</span>
+                <div class="bar red"></div>
+            </div>
+            <div class="status">
+                <span>残りHP90</span>
+                <div class="bar green"></div>
+            </div>
+        </section>
+    </div>
+    <button
+        class="duel-btn"
+        type="button"
+        onclick={`window.location.href='/duel/${opponent}/active?user=${myId}'`}
+    >
+        デュエル
+    </button>
+</BaseLayout>

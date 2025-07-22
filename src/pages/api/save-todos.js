@@ -2,12 +2,13 @@ import { rdb } from "../../firebase/server";
 import { ref, set } from "firebase/database";
 
 export const prerender = false;
+
 export async function POST({ request }) {
     try {
-        // ここでbody受け取るなら↓
         const body = await request.json();
-        const { opponent, myId, todos } = body;
-        console.log({ opponent, myId, todos }); // ← ここだけ修正
+        let { opponent, myId, todos } = body;
+        // opponentの「.」を「_」に置換！
+        const safeOpponent = opponent.replace(/\./g, "_");
 
         if (
             typeof opponent !== "string" ||
@@ -20,10 +21,11 @@ export async function POST({ request }) {
             );
         }
 
-        await set(ref(rdb, `duels/${opponent}/${myId}`), todos);
+        await set(ref(rdb, `duels/${safeOpponent}/${myId}`), todos);
 
         return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
     } catch (e) {
+        console.error("🔥 APIサーバーエラー内容:", e);
         return new Response(
             JSON.stringify({ status: "ng", error: String(e) }),
             { status: 500 }

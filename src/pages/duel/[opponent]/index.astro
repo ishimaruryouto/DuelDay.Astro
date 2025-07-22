@@ -280,29 +280,15 @@ const { opponent } = Astro.params;
             });
         });
 
-        // --- カテゴリ切り替えでinput増減があってもイベント維持 ---
-        // (ただし今回は全部一気に描画してるから再付与不要。)
-
-        // --- モーダル進む＝選択内容をDB保存＆遷移 ---
-        // modalProceed.addEventListener("click", async () => {
-        //     battleModal.style.display = "none";
-        //     const allBoxes = getAllBoxes();
-        //     const selected = allBoxes
-        //         .filter((b) => b.checked)
-        //         .map((b) => b.getAttribute("data-id"));
-        //     try {
-        //         await set(ref(rdb, `duels/${opponent}/${myId}`), selected);
-        //         window.location.href = `/duel/${encodeURIComponent(opponent)}/battle?user=${myId}`;
-        //     } catch (e) {
-        //         alert("送信エラー！" + e);
-        //     }
-        // });
         modalProceed.addEventListener("click", async () => {
             battleModal.style.display = "none";
             const allBoxes = getAllBoxes();
             const selected = allBoxes
                 .filter((b) => b.checked)
-                .map((b) => b.getAttribute("data-id"));
+                .map((b) => ({
+                    label: b.getAttribute("data-id"),
+                    category: b.closest("ul")?.dataset.cat || "",
+                }));
 
             // --- APIルートにPOST ---
             try {

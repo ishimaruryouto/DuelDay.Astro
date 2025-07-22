@@ -20,12 +20,15 @@ const searchParams = new URL(url).searchParams;
 const myId = searchParams.get("user") || "testUser1";
 const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
 
+const safeOpponent = opponent.replace(/\./g, "_");
+
 // --- DBから両者の配列取得 ---
 let userTodos: string[] = [];
 let opponentTodos: string[] = [];
 try {
-    const mySnap = await get(ref(rdb, `duels/${opponent}/${myId}`));
-    const oppSnap = await get(ref(rdb, `duels/${opponent}/${opponentId}`));
+    // ここで safeOpponent を使う！
+    const mySnap = await get(ref(rdb, `duels/${safeOpponent}/${myId}`));
+    const oppSnap = await get(ref(rdb, `duels/${safeOpponent}/${opponentId}`));
     userTodos = mySnap.exists() ? mySnap.val() : [];
     opponentTodos = oppSnap.exists() ? oppSnap.val() : [];
 } catch {
@@ -33,36 +36,6 @@ try {
     opponentTodos = [];
 }
 ---
-
-<BaseLayout>
-    <h1>バトル内容発表</h1>
-    <h2>あなたのToDo</h2>
-    <ul>
-        {
-            userTodos.length > 0 ? (
-                userTodos.map((todo) => <li>{todo}</li>)
-            ) : (
-                <li>（未選択）</li>
-            )
-        }
-    </ul>
-    <h2>相手のToDo</h2>
-    <ul>
-        {
-            opponentTodos.length > 0 ? (
-                opponentTodos.map((todo) => <li>{todo}</li>)
-            ) : (
-                <li>（未選択）</li>
-            )
-        }
-    </ul>
-    <button class="battle-btn">バトル開始</button>
-    <!-- デバッグ用表示（本番は消してOK） -->
-    <pre
-        style="color:white; background:#222; font-size:1rem; padding:12px;">
-        {JSON.stringify({ myId, opponentId, opponent, userTodos, opponentTodos }, null, 2)}
-    </pre>
-</BaseLayout>
 
 <style>
     .battle-btn {
@@ -90,3 +63,44 @@ try {
         margin-bottom: 1.2rem;
     }
 </style>
+
+<BaseLayout>
+    <h1>バトル内容発表</h1>
+    <h2>あなたのToDo</h2>
+    <ul>
+        {
+            userTodos.length > 0 ? (
+                userTodos.map((todo) => <li>{todo}</li>)
+            ) : (
+                <li>（未選択）</li>
+            )
+        }
+    </ul>
+    <h2>相手のToDo</h2>
+    <ul>
+        {
+            opponentTodos.length > 0 ? (
+                opponentTodos.map((todo) => <li>{todo}</li>)
+            ) : (
+                <li>（未選択）</li>
+            )
+        }
+    </ul>
+    <button class="battle-btn" id="battleStartBtn">バトル開始</button>
+</BaseLayout>
+
+<script>
+    // ボタンクリックでページ遷移
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("battleStartBtn");
+        if (btn) {
+            btn.addEventListener("click", () => {
+                const params = new URLSearchParams(window.location.search);
+                const myId = params.get("user") || "testUser1";
+                const match = window.location.pathname.match(/duel\/([^/]+)/);
+                const opponent = match ? match[1] : "H.miyoshi";
+                window.location.href = `/duel/${encodeURIComponent(opponent)}/duel?user=${myId}`;
+            });
+        }
+    });
+</script>
