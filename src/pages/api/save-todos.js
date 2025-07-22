@@ -1,9 +1,13 @@
-import { rdb } from "../../firebase/client";
+import { rdb } from "../../firebase/server";
 import { ref, set } from "firebase/database";
 
+export const prerender = false;
 export async function POST({ request }) {
     try {
-        const { opponent, myId, todos } = await request.json();
+        // ここでbody受け取るなら↓
+        const body = await request.json();
+        const { opponent, myId, todos } = body;
+        console.log({ opponent, myId, todos }); // ← ここだけ修正
 
         if (
             typeof opponent !== "string" ||

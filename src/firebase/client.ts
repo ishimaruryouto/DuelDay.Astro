@@ -6,15 +6,15 @@ import { getDatabase, ref, set, onValue } from "firebase/database";
 
 // 🚀 環境変数は .env で管理してる想定
 const firebaseConfig = {
-    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
-    authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-    databaseURL: import.meta.env.PUBLIC_FIREBASE_DATABASE_URL,
-    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
+    apiKey: "AIzaSyBPN4ZqMaO4B5UFHMKEz8Mj4K_NPlzM7ow",
+    authDomain: "duelday-28a68.firebaseapp.com",
+    databaseURL: "https://duelday-28a68-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "duelday-28a68",
+    storageBucket: "duelday-28a68.appspot.com", // ← ここやで
+    messagingSenderId: "609382787888",
+    appId: "1:609382787888:web:08090c52202442fb03f6f5",
+    measurementId: "G-Y1CHNDPLLW"
 };
-
 // 既に初期化済みなら再利用、なければ初期化
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
