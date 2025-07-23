@@ -21,6 +21,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
             @include mixin.batch;
             .item {
                 @include mixin.batch-item;
+                &:nth-child(3) {
+                    background-image: url("../../assets/reading.png");
+                    background-size: cover;
+                }
             }
         }
     }

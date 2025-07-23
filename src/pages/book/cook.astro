@@ -20,6 +20,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
             @include mixin.batch;
             .item {
                 @include mixin.batch-item;
+                &:nth-child(2) {
+                    background-image: url("../../assets/cooking.png");
+                    background-size: cover;
+                }
+                &:nth-child(6) {
+                    background-image: url("../../assets/cook-book.png");
+                    background-size: cover;
+                }
             }
         }
     }

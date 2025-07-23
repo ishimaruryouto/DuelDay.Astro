@@ -25,13 +25,23 @@ try {
 }
 
 // 合体リスト
+// 合体リスト
 const allTodos = [
-    ...myTodos.map((label: string) => ({ label, owner: "自分" })),
-    ...oppTodos.map((label: string) => ({ label, owner: "相手" })),
+    ...myTodos.map((todo: any) =>
+        typeof todo === "string"
+            ? { label: todo, owner: "自分" }
+            : { label: todo.label ?? JSON.stringify(todo), owner: "自分" },
+    ),
+    ...oppTodos.map((todo: any) =>
+        typeof todo === "string"
+            ? { label: todo, owner: "相手" }
+            : { label: todo.label ?? JSON.stringify(todo), owner: "相手" },
+    ),
 ];
 
 // allTodosをwindow経由でJSに渡す用
 const allTodosJSON = JSON.stringify(allTodos);
+console.log(allTodosJSON);
 ---
 
 <style lang="scss">
@@ -102,9 +112,9 @@ const allTodosJSON = JSON.stringify(allTodos);
                         data-id={item.label}
                     />
                     <label for={`battle-todo-${i}`}>
-                        {item.label}{" "}
+                        {item.label}
                         <span style="font-size: 0.9em; color: #ccc;">
-                            ({item.owner})
+                            （{item.owner}）
                         </span>
                     </label>
                 </li>
@@ -112,13 +122,11 @@ const allTodosJSON = JSON.stringify(allTodos);
         }
     </ul>
     <button id="finishBtn" class="finish-btn">終わった</button>
-    <script is:inline>
-        // Astro→JS: allTodos配列をwindowに展開
-        window.allTodos = JSON.parse("{allTodosJSON}");
-    </script>
 </BaseLayout>
 
 <script>
+    // (window as any).allTodos = JSON.parse("{allTodosJSON}");
+    // console.log((window as any).allTodos);
     // 「終わった」ボタンでチェック状態つきで保存→遷移
     document
         .getElementById("finishBtn")
@@ -146,11 +154,10 @@ const allTodosJSON = JSON.stringify(allTodos);
 
             // 3. 自分が選んだToDoだけフィルタして保存
             const myCheckedTodos = todosToSave.filter(
-                (t: { owner: string }) => t.owner === "自分",
+                (t: any) => t.owner === "自分",
             );
 
             // 4. DBに保存（APIルートを作ってたらfetchで送信、直接setするならそのままset）
-            // 例: API経由
             await fetch("/api/save-todos", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -158,6 +165,51 @@ const allTodosJSON = JSON.stringify(allTodos);
             });
 
             // 5. ページ遷移
-            window.location.href = `/duel/${opponent}/result?user=${myId}`;
+            // window.location.href = `/duel/${opponent}/result?user=${myId}`;
         });
+    document.getElementById("finishBtn")?.addEventListener("click", () => {
+        // 現在のURLからopponentを取得
+        const match = window.location.pathname.match(/duel\/([^/]+)/);
+        const opponent = match ? match[1] : "H.miyoshi";
+        const params = new URLSearchParams(window.location.search);
+        const myId = params.get("user") || "testUser1";
+
+        // ページ遷移だけ
+        window.location.href = `/duel/${opponent}/result?user=${myId}`;
+    });
+
+    // const allTodos = /** @type {{label:string, owner:string}[]} */ (
+    //     JSON.parse(decodeURIComponent("{allTodosJSON}"))
+    // );
+
+    // document.getElementById("finishBtn")?.addEventListener("click", () => {
+    //     // チェックボックスの状態取得
+    //     const myTodosList = allTodos.filter((t: any) => t.owner === "自分");
+    //     const oppTodosList = allTodos.filter((t: any) => t.owner === "相手");
+
+    //     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    //     const checkedArr = Array.from(checkboxes).map(
+    //         (box) => (box as HTMLInputElement).checked,
+    //     );
+
+    //     // checked付きで自分のToDo作る
+    //     const myCheckedTodos = myTodosList.map((todo: any, i: number) => ({
+    //         ...todo,
+    //         checked: checkedArr[i],
+    //     }));
+
+    //     // 相手（チェック不可）は元データそのまま
+    //     const oppCheckedTodos = oppTodosList;
+
+    //     // URLクエリ生成してresult.astroへ遷移
+    //     const params = new URLSearchParams(window.location.search);
+    //     const myId = params.get("user") || "testUser1";
+    //     const match = window.location.pathname.match(/duel\/([^/]+)/);
+    //     const opponent = match ? match[1] : "H.miyoshi";
+
+    //     window.location.href =
+    //         `/duel/${opponent}/result?user=${myId}` +
+    //         `&myTodos=${encodeURIComponent(JSON.stringify(myCheckedTodos))}` +
+    //         `&oppTodos=${encodeURIComponent(JSON.stringify(oppCheckedTodos))}`;
+    // });
 </script>

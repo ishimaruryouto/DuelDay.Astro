@@ -1,28 +1,117 @@
 ---
+// result.astro 完全版
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { rdb } from "../../../firebase/client";
+import { ref, get } from "firebase/database";
 
-// 仮データ。実際はactive.astroからクエリ/DB経由で取得する想定
-const myTodos = [
-    { label: "玄関の床の拭き掃除", checked: true },
-    { label: "朝食セットをつくる", checked: true },
-    { label: "ゴミをまとめる", checked: false },
+// URLからパラメータ取得
+const { opponent } = Astro.params;
+const url = Astro.request.url;
+const searchParams = new URL(url).searchParams;
+const myId = searchParams.get("user") || "testUser1";
+const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
+const safeOpponent = (opponent ?? "unknown").replace(/\./g, "_");
+
+// DBから取得（これが超重要！）
+let myTodos = [];
+let oppTodos = [];
+try {
+    const mySnap = await get(ref(rdb, `duels/${safeOpponent}/${myId}`));
+    const oppSnap = await get(ref(rdb, `duels/${safeOpponent}/${opponentId}`));
+    myTodos = mySnap.exists() ? mySnap.val() : [];
+    oppTodos = oppSnap.exists() ? oppSnap.val() : [];
+} catch {
+    myTodos = [];
+    oppTodos = [];
+}
+
+// タスク判定ロジック
+type Todo = { label: string; checked?: boolean };
+
+const exerciseLabels = [
+    "腹筋：20回",
+    "腕立て：20回",
+    "背筋：20回",
+    "プランク：50秒",
+    "ランニング：20分",
+    "サイクリング：20分",
+    "スクワット：30回",
 ];
-const oppTodos = [
-    { label: "ランニング：20分", checked: false },
-    { label: "腕立て：30回", checked: true },
-    { label: "小説を5ページ読む", checked: false },
+const cleaningLabels = [
+    "ゴミをまとめる",
+    "洋服を畳む",
+    "玄関の掃除",
+    "トイレ掃除",
+    "キッチンのシンク掃除",
+    "洗面台の鏡を拭く",
+    "スマホの写真整理",
+];
+const cookLabels = [
+    "1品だけ料理する",
+    "朝食セットをつくる",
+    "今日食べたいものを1品作る",
+    "作った料理の写真を撮って保存",
+    "ラーメン＋野菜トッピング",
+    "作った料理の工程をメモ",
+    "次に作りたい料理をメモ",
+];
+const readLabels = [
+    "図書館の本を一冊借りる",
+    "気になる目次の章をメモる",
+    "1章読み切る",
+    "小説を5ページ読む",
+    "心に残った一文をメモ帳に書く",
+    "読んだ内容を一言でメモする",
+    "感想を3行で書いてみる",
+];
+const stretchLabels = [
+    "風呂上がりストレッチ：5分",
+    "寝る前ストレッチ：3分",
+    "首をゆっくり左右に倒す（各10秒×3）",
+    "足首をゆっくり回す（左右×30秒）",
+    "気持ちよかったストレッチをメモ",
+    "太もも裏を伸ばす前屈ストレッチ",
+    "今日伸ばした部位をメモ",
 ];
 
-// HP計算（20点ごと減点、初期100）
-const calcHP = (todos: { checked: boolean }[]) =>
-    100 - todos.filter((t: { checked: boolean }) => !t.checked).length * 20;
-const myHP = calcHP(myTodos);
-const oppHP = calcHP(oppTodos);
+function calcBattle(myTodos: Todo[], oppTodos: Todo[]) {
+    let myHP = 80;
+    let oppHP = 60;
 
-// 勝者判定
-let winner: "draw" | "me" | "opp" = "draw";
-if (myHP > oppHP) winner = "me";
-if (myHP < oppHP) winner = "opp";
+    myTodos.forEach((todo: Todo) => {
+        if (!todo.checked) return;
+        const label = todo.label;
+        if (exerciseLabels.includes(label) || cleaningLabels.includes(label))
+            oppHP -= 10;
+        if (
+            cookLabels.includes(label) ||
+            readLabels.includes(label) ||
+            stretchLabels.includes(label)
+        )
+            myHP += 10;
+    });
+    oppTodos.forEach((todo: Todo) => {
+        if (!todo.checked) return;
+        const label = todo.label;
+        if (exerciseLabels.includes(label) || cleaningLabels.includes(label))
+            myHP -= 10;
+        if (
+            cookLabels.includes(label) ||
+            readLabels.includes(label) ||
+            stretchLabels.includes(label)
+        )
+            oppHP += 10;
+    });
+
+    myHP = Math.max(0, myHP);
+    oppHP = Math.max(0, oppHP);
+
+    let winner: "draw" | "me" | "opp" = "draw";
+    if (myHP > oppHP) winner = "me";
+    if (myHP < oppHP) winner = "opp";
+    return { myHP, oppHP, winner };
+}
+const { myHP, oppHP, winner } = calcBattle(myTodos, oppTodos);
 ---
 
 <style lang="scss">
@@ -35,8 +124,8 @@ if (myHP < oppHP) winner = "opp";
             flex: 1;
             color: #fff;
             text-align: center;
-            h2 {
-                font-size: 1.7rem;
+            h1 {
+                font-size: 2.3rem;
                 margin-bottom: 1rem;
             }
             .bar {
@@ -44,10 +133,7 @@ if (myHP < oppHP) winner = "opp";
                 height: 22px;
                 border-radius: 12px;
                 margin: 0.7rem auto;
-                background: #ddd;
-                &.green {
-                    background: #19df5b;
-                }
+                background: #19df5b;
                 &.gray {
                     background: #bbb;
                     border: 3px dotted #fff;
@@ -88,7 +174,7 @@ if (myHP < oppHP) winner = "opp";
         <div class="player player-self">
             <h1>自分</h1>
             <div>残りHP{myHP}</div>
-            <div class={`bar ${myHP > 0 ? "green" : "gray"}`}></div>
+            <div class={`bar ${myHP > 0 ? "" : "gray"}`}></div>
             {
                 winner === "me" && (
                     <div class="winner">
@@ -101,7 +187,7 @@ if (myHP < oppHP) winner = "opp";
         <div class="player player-opponent">
             <h1>相手</h1>
             <div>残りHP{oppHP}</div>
-            <div class={`bar ${oppHP > 0 ? "green" : "gray"}`}></div>
+            <div class={`bar ${oppHP > 0 ? "" : "gray"}`}></div>
             {
                 winner === "opp" && (
                     <div class="winner">

@@ -21,9 +21,9 @@ const myId = searchParams.get("user") || "testUser1";
 const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
 
 const safeOpponent = opponent.replace(/\./g, "_");
-
+let userTodos: Array<{ label: string; [key: string]: any }> | string[] = [];
 // --- DBから両者の配列取得 ---
-let userTodos: string[] = [];
+// let userTodos: string[] = [];
 let opponentTodos: string[] = [];
 try {
     // ここで safeOpponent を使う！
@@ -35,6 +35,7 @@ try {
     userTodos = [];
     opponentTodos = [];
 }
+console.log("userTodos:", userTodos);
 ---
 
 <style>
@@ -56,11 +57,15 @@ try {
     h2 {
         color: #fff;
         margin: 1.2rem 0 0.2rem;
-        font-size: 1.3rem;
+        font-size: 1.7rem;
     }
     ul {
         color: #fff;
-        margin-bottom: 1.2rem;
+        margin-bottom: 3rem;
+        li {
+            font-size: 1.3rem;
+            line-height: 2;
+        }
     }
 </style>
 
@@ -70,7 +75,15 @@ try {
     <ul>
         {
             userTodos.length > 0 ? (
-                userTodos.map((todo) => <li>{todo}</li>)
+                userTodos.map((todo) =>
+                    typeof todo === "object" &&
+                    todo !== null &&
+                    "label" in todo ? (
+                        <li>{todo.label}</li>
+                    ) : (
+                        <li>{todo}</li>
+                    ),
+                )
             ) : (
                 <li>（未選択）</li>
             )
@@ -80,14 +93,22 @@ try {
     <ul>
         {
             opponentTodos.length > 0 ? (
-                opponentTodos.map((todo) => <li>{todo}</li>)
+                opponentTodos.map((todo: any) =>
+                    typeof todo === "object" &&
+                    todo !== null &&
+                    "label" in todo ? (
+                        <li>{todo.label}</li>
+                    ) : (
+                        <li>{todo}</li>
+                    ),
+                )
             ) : (
                 <li>（未選択）</li>
             )
         }
     </ul>
-    <button class="battle-btn" id="battleStartBtn">バトル開始</button>
 </BaseLayout>
+<button class="battle-btn" id="battleStartBtn">バトル開始</button>
 
 <script>
     // ボタンクリックでページ遷移
