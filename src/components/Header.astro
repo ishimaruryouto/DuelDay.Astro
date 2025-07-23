@@ -3,35 +3,33 @@
 ---
 
 <style lang="scss">
-    // @use "../styles/_mixin.scss" as mixin;
-
     header {
-        position: fixed; // 画面上部に固定
+        position: fixed;
         top: 0;
         right: 0;
         width: 100%;
         padding-top: 45px;
-        padding-right: 30px; // 上下左右の余白
+        padding-right: 30px;
         display: flex;
-        justify-content: flex-end; // 右端に配置
-        z-index: 1001; // モーダルや他要素より前面
+        justify-content: flex-end;
+        z-index: 1001;
     }
 
     .hamburger {
-        display: flex; // 中の .bar を縦並びに
+        display: flex;
         flex-direction: column;
-        justify-content: space-between; // 上下のスペースを均等に
-        width: 40px; // 全体の幅
-        height: 20px; // 全体の高さ
-        cursor: pointer; // ホバー時にポインタ
+        justify-content: space-between;
+        width: 40px;
+        height: 20px;
+        cursor: pointer;
     }
 
     .bar {
-        display: block; // 要素をブロックに
-        width: 100%; // 親（28px）いっぱい
-        height: 2px; // 棒の太さ
-        background-color: #fff; // 白色
-        border-radius: 2px; // 角丸にして見た目を柔らかく
+        display: block;
+        width: 100%;
+        height: 2px;
+        background-color: #fff;
+        border-radius: 2px;
         transition:
             transform 0.3s ease,
             opacity 0.3s ease;
@@ -45,15 +43,3 @@
         <span class="bar"></span>
     </button>
 </header>
-
-<script>
-    // window.addEventListener("DOMContentLoaded", function () {
-    //     const btn = document.getElementById("hamburger");
-    //     const modal = this.document.getElementById("profile_moadal");
-    //     btn?.addEventListener("click", function () {
-    //         const isopen = modal.style.display === "flex";
-    //         modal.style.display = isopen ? "none" : "flex";
-    //         btn.classList.toggle("is_open", !isopen);
-    //     });
-    // });
-</script>

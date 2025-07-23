@@ -3,7 +3,6 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../firebase/client";
 import { doc, getDoc } from "firebase/firestore";
 import "../../../styles/main.scss";
-// Firebase RealtimeDB用
 import { rdb } from "../../../firebase/client";
 import { ref, set } from "firebase/database";
 
@@ -226,17 +225,11 @@ const { opponent } = Astro.params;
 </BaseLayout>
 
 <script type="module">
-    // await saveTodos({ opponent, myId, selected });
-    // import { rdb } from "../../../firebase/client";
-    // import { ref, set } from "firebase/database";
-
-    // ページのDOMがすべて描画された後に実行
     window.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams(window.location.search);
         const myId = params.get("user") || "testUser1";
         const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
 
-        // パスからopponent名取得
         const pathMatch = window.location.pathname.match(/duel\/([^/]+)/);
         const opponent = pathMatch ? pathMatch[1] : "";
 
@@ -245,15 +238,12 @@ const { opponent } = Astro.params;
         const battleModal = document.getElementById("battleModal");
         const modalProceed = document.getElementById("modalProceed");
 
-        // --- 動的に全input監視（カテゴリ切り替えで新inputが現れるパターンもカバー！） ---
         function getAllBoxes() {
-            // すべてのulのすべてのinputを都度取得（動的に変わる可能性のため！）
             return Array.from(
                 document.querySelectorAll('input[type="checkbox"]'),
             );
         }
 
-        // --- カテゴリ切り替え ---
         navBtns.forEach((btn) => {
             btn.addEventListener("click", () => {
                 const cat = btn.dataset.cat;
@@ -265,11 +255,9 @@ const { opponent } = Astro.params;
             });
         });
 
-        // --- 3つ上限&モーダルロジック ---
-        // すべてのinputにイベントをつける
         getAllBoxes().forEach((box) => {
             box.addEventListener("change", () => {
-                const allBoxes = getAllBoxes(); // 都度取得！
+                const allBoxes = getAllBoxes();
                 const totalChecked = allBoxes.filter((b) => b.checked).length;
                 if (totalChecked > 3) {
                     box.checked = false;
@@ -290,7 +278,6 @@ const { opponent } = Astro.params;
                     category: b.closest("ul")?.dataset.cat || "",
                 }));
 
-            // --- APIルートにPOST ---
             try {
                 const params = new URLSearchParams(window.location.search);
                 const myId = params.get("user") || "testUser1";

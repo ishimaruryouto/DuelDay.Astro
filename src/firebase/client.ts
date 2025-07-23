@@ -4,7 +4,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 
-// 🚀 環境変数は .env で管理してる想定
 const firebaseConfig = {
     apiKey: "AIzaSyBPN4ZqMaO4B5UFHMKEz8Mj4K_NPlzM7ow",
     authDomain: "duelday-28a68.firebaseapp.com",
@@ -15,14 +14,14 @@ const firebaseConfig = {
     appId: "1:609382787888:web:08090c52202442fb03f6f5",
     measurementId: "G-Y1CHNDPLLW"
 };
-// 既に初期化済みなら再利用、なければ初期化
+
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const rdb = getDatabase(app);
 
-// ここでRealtime Database用のユーティリティもexportしておく！
+
 export { ref, set, onValue };
 
 export async function saveTodos({

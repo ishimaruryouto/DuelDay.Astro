@@ -3,7 +3,6 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { rdb } from "../../../firebase/client";
 import { ref, get } from "firebase/database";
 
-// --- 必須: 動的ルート用 getStaticPaths ---
 export function getStaticPaths() {
     return [
         { params: { opponent: "H.miyoshi" } },
@@ -13,20 +12,17 @@ export function getStaticPaths() {
     ];
 }
 
-// --- パス・クエリ取得 ---
 const { opponent } = Astro.params;
-const url = Astro.request.url; // Astro 3系以降
+const url = Astro.request.url;
 const searchParams = new URL(url).searchParams;
 const myId = searchParams.get("user") || "testUser1";
 const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
 
 const safeOpponent = opponent.replace(/\./g, "_");
 let userTodos: Array<{ label: string; [key: string]: any }> | string[] = [];
-// --- DBから両者の配列取得 ---
-// let userTodos: string[] = [];
+
 let opponentTodos: string[] = [];
 try {
-    // ここで safeOpponent を使う！
     const mySnap = await get(ref(rdb, `duels/${safeOpponent}/${myId}`));
     const oppSnap = await get(ref(rdb, `duels/${safeOpponent}/${opponentId}`));
     userTodos = mySnap.exists() ? mySnap.val() : [];
@@ -111,7 +107,6 @@ console.log("userTodos:", userTodos);
 <button class="battle-btn" id="battleStartBtn">バトル開始</button>
 
 <script>
-    // ボタンクリックでページ遷移
     document.addEventListener("DOMContentLoaded", () => {
         const btn = document.getElementById("battleStartBtn");
         if (btn) {

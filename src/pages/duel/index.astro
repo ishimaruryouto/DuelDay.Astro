@@ -17,7 +17,6 @@ import SOWD from "../../assets/sword.png";
             filter: blur(5px);
         }
 
-        /* ヘッダー／友だち追加ボタン */
         .add_friend {
             display: flex;
             align-items: center;
@@ -50,7 +49,6 @@ import SOWD from "../../assets/sword.png";
             }
         }
 
-        /* 対戦カード */
         .card {
             width: 100%;
             height: 110px;
@@ -94,7 +92,7 @@ import SOWD from "../../assets/sword.png";
             }
         }
     }
-    /* モーダル本体 */
+
     .modal_wrap {
         position: absolute;
         top: 190px;
@@ -104,7 +102,6 @@ import SOWD from "../../assets/sword.png";
         height: 250px;
         background: #3a4750;
         border-radius: 15px;
-        // border: 1px solid tomato;
 
         &.visible {
             display: block;
@@ -122,7 +119,6 @@ import SOWD from "../../assets/sword.png";
                 width: 80px;
                 height: 80px;
                 border-radius: 50%;
-                // border: 1px solid tomato;
             }
             p {
                 color: #fff;
@@ -203,13 +199,11 @@ import SOWD from "../../assets/sword.png";
 </BaseLayout>
 
 <script type="module">
-    // モーダルと背景ぼかしの要素を取得
     const modal = document.querySelector(".modal_wrap");
     const closeBtn = modal?.querySelector("button");
     const noneWrap = document.querySelector(".none_wrap");
     const duelBtns = document.querySelectorAll(".card a");
 
-    // モーダル内の内容を差し替える要素
     const modalImg = document.querySelector(".duel_modal_img");
     const modalWinrate = document.querySelector(".duel_modal_winrate");
     const modalName = document.querySelector(".duel_modal_name");
@@ -219,7 +213,6 @@ import SOWD from "../../assets/sword.png";
         btn.addEventListener("click", (e) => {
             e.preventDefault();
 
-            // 押されたボタンの親 .card を取得
             const card = btn.closest(".card");
             if (
                 !card ||
@@ -231,14 +224,12 @@ import SOWD from "../../assets/sword.png";
             )
                 return;
 
-            // カード内の img と user_info の p 要素を取得
             const avatarEl = card.querySelector("img");
             const winrateEl = card.querySelector(".user_info p:first-child");
             const nameEl = card.querySelector(".user_info p:last-child");
 
             if (!avatarEl || !winrateEl || !nameEl) return;
 
-            // モーダルにセット
             modalImg.src = avatarEl.src;
             modalImg.alt = nameEl.textContent || "";
             modalWinrate.textContent = winrateEl.textContent || "";
@@ -251,19 +242,16 @@ import SOWD from "../../assets/sword.png";
                 window.location.href = `/duel/${opponentId}`;
             };
 
-            // モーダル表示＋背景をぼかす
             modal.classList.add("visible");
             noneWrap.classList.add("blur");
         });
     });
 
-    // モーダル内の閉じるボタン
     closeBtn?.addEventListener("click", () => {
         modal?.classList.remove("visible");
         noneWrap?.classList.remove("blur");
     });
 
-    // オーバーレイクリックで閉じる
     modal?.addEventListener("click", (e) => {
         if (e.target === modal) {
             modal.classList.remove("visible");

@@ -11,7 +11,6 @@ const myId = searchParams.get("user") || "testUser1";
 const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
 const safeOpponent = opponent!.replace(/\./g, "_");
 
-// RealtimeDBから取得
 let myTodos = [];
 let oppTodos = [];
 try {
@@ -24,8 +23,6 @@ try {
     oppTodos = [];
 }
 
-// 合体リスト
-// 合体リスト
 const allTodos = [
     ...myTodos.map((todo: any) =>
         typeof todo === "string"
@@ -39,7 +36,6 @@ const allTodos = [
     ),
 ];
 
-// allTodosをwindow経由でJSに渡す用
 const allTodosJSON = JSON.stringify(allTodos);
 console.log(allTodosJSON);
 ---
@@ -125,9 +121,6 @@ console.log(allTodosJSON);
 </BaseLayout>
 
 <script>
-    // (window as any).allTodos = JSON.parse("{allTodosJSON}");
-    // console.log((window as any).allTodos);
-    // 「終わった」ボタンでチェック状態つきで保存→遷移
     document
         .getElementById("finishBtn")
         ?.addEventListener("click", async () => {
@@ -136,7 +129,6 @@ console.log(allTodosJSON);
             const match = window.location.pathname.match(/duel\/([^/]+)/);
             const opponent = match ? match[1] : "H.miyoshi";
 
-            // 1. チェックボックスの状態を取得
             const checkboxes = document.querySelectorAll(
                 'input[type="checkbox"]',
             );
@@ -144,72 +136,28 @@ console.log(allTodosJSON);
                 (box) => (box as HTMLInputElement).checked,
             );
 
-            // 2. allTodosにcheckedつきで新配列
-            // クライアントJS内
             const allTodos = (window as any).allTodos || [];
             const todosToSave = allTodos.map((todo: any, i: number) => ({
                 ...todo,
-                checked: checkedArr[i], // ここで完了状態をセット
+                checked: checkedArr[i],
             }));
 
-            // 3. 自分が選んだToDoだけフィルタして保存
             const myCheckedTodos = todosToSave.filter(
                 (t: any) => t.owner === "自分",
             );
 
-            // 4. DBに保存（APIルートを作ってたらfetchで送信、直接setするならそのままset）
             await fetch("/api/save-todos", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ opponent, myId, todos: myCheckedTodos }),
             });
-
-            // 5. ページ遷移
-            // window.location.href = `/duel/${opponent}/result?user=${myId}`;
         });
     document.getElementById("finishBtn")?.addEventListener("click", () => {
-        // 現在のURLからopponentを取得
         const match = window.location.pathname.match(/duel\/([^/]+)/);
         const opponent = match ? match[1] : "H.miyoshi";
         const params = new URLSearchParams(window.location.search);
         const myId = params.get("user") || "testUser1";
 
-        // ページ遷移だけ
         window.location.href = `/duel/${opponent}/result?user=${myId}`;
     });
-
-    // const allTodos = /** @type {{label:string, owner:string}[]} */ (
-    //     JSON.parse(decodeURIComponent("{allTodosJSON}"))
-    // );
-
-    // document.getElementById("finishBtn")?.addEventListener("click", () => {
-    //     // チェックボックスの状態取得
-    //     const myTodosList = allTodos.filter((t: any) => t.owner === "自分");
-    //     const oppTodosList = allTodos.filter((t: any) => t.owner === "相手");
-
-    //     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    //     const checkedArr = Array.from(checkboxes).map(
-    //         (box) => (box as HTMLInputElement).checked,
-    //     );
-
-    //     // checked付きで自分のToDo作る
-    //     const myCheckedTodos = myTodosList.map((todo: any, i: number) => ({
-    //         ...todo,
-    //         checked: checkedArr[i],
-    //     }));
-
-    //     // 相手（チェック不可）は元データそのまま
-    //     const oppCheckedTodos = oppTodosList;
-
-    //     // URLクエリ生成してresult.astroへ遷移
-    //     const params = new URLSearchParams(window.location.search);
-    //     const myId = params.get("user") || "testUser1";
-    //     const match = window.location.pathname.match(/duel\/([^/]+)/);
-    //     const opponent = match ? match[1] : "H.miyoshi";
-
-    //     window.location.href =
-    //         `/duel/${opponent}/result?user=${myId}` +
-    //         `&myTodos=${encodeURIComponent(JSON.stringify(myCheckedTodos))}` +
-    //         `&oppTodos=${encodeURIComponent(JSON.stringify(oppCheckedTodos))}`;
-    // });
 </script>

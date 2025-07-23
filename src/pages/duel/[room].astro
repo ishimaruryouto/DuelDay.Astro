@@ -5,13 +5,11 @@ import { db } from "../../firebase/client.js";
 import { doc, getDoc } from "firebase/firestore";
 import "../../styles/main.scss";
 
-// ── ❶ Static Paths を room ベースに
 export function getStaticPaths() {
     return [{ params: { room: "room123" } }, { params: { room: "testroom" } }];
 }
 const { room } = Astro.params;
 
-// ── ❷ Firestore から ToDo カテゴリを SSR で取得
 const exerciseSnap = await getDoc(doc(db, "todoCategories", "exercise"));
 const exerciseItems = exerciseSnap.exists() ? exerciseSnap.data().items : [];
 
@@ -135,7 +133,6 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
     <h1>ルーム: {room}</h1>
     <p>あなたのターン</p>
 
-    <!-- カテゴリ切り替え -->
     <nav class="choose_nav">
         <button data-cat="exercise" class="active">運動</button>
         <button data-cat="cleaning">掃除</button>
@@ -144,7 +141,6 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
         <button data-cat="stretch">ストレッチ</button>
     </nav>
 
-    <!-- SSR で出力する各リスト -->
     <ul class="todo_list active" data-cat="exercise">
         {
             exerciseItems.map((item) => (
@@ -196,7 +192,6 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
         }
     </ul>
 
-    <!-- ❸ モーダル -->
     <div id="battleModal" class="modal_overlay">
         <div class="modal_content">
             <p>バトルに進みますか？</p>
@@ -205,122 +200,18 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
     </div>
 </BaseLayout>
 
-<!-- <script type="module">
-    // ❹ Astro.params.room を埋め込む
-    const roomParam = `${JSON.stringify(room)}`;
-    // クエリパラメータ ?me=alice などでプレイヤーを特定
-    const meId = new URL(location.href).searchParams.get("me") ?? "guest";
-
-    // Firebase CDN モジュールを使って RTDB 初期化
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import {
-        getDatabase,
-        ref,
-        set,
-        onValue,
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
-        authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-        storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-        appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
-        databaseURL: import.meta.env.PUBLIC_FIREBASE_DATABASE_URL,
-    };
-    const app = initializeApp(firebaseConfig);
-    const rdb = getDatabase(app);
-
-    // カテゴリ & リスト切り替え
-    const navBtns = document.querySelectorAll(".choose_nav button");
-    const lists = document.querySelectorAll(".todo_list");
-    navBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const cat = btn.dataset.cat;
-            navBtns.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            lists.forEach((ul) => {
-                ul.dataset.cat === cat
-                    ? ul.classList.add("active")
-                    : ul.classList.remove("active");
-            });
-        });
-    });
-
-    // チェックボックス監視 → 3つ選んだらモーダル表示
-    const allBoxes = Array.from(
-        document.querySelectorAll('input[type="checkbox"]'),
-    );
-    const battleModal = document.getElementById("battleModal");
-    const modalProceed = document.getElementById("modalProceed");
-
-    allBoxes.forEach((box) => {
-        box.addEventListener("change", () => {
-            const count = allBoxes.filter((b) => b.checked).length;
-            if (count > 3) {
-                box.checked = false;
-                alert("選択は３つまでです");
-            } else if (count === 3) {
-                battleModal.classList.add("visible");
-            }
-        });
-    });
-
-    // “進む” ボタンで RTDB に書き込み
-    modalProceed.addEventListener("click", () => {
-        battleModal.classList.remove("visible");
-        // 選択 ID の配列
-        const selected = allBoxes.filter((b) => b.checked).map((b) => b.id);
-
-        // rooms/{room}/selections/{meId}
-        set(ref(rdb, `rooms/${roomParam}/selections/${meId}`), selected).catch(
-            (err) => {
-                console.error("Failed to write:", err);
-                alert("通信エラーが発生しました");
-            },
-        );
-
-        // (オプション) 相手の選択を監視して両者そろったら画面遷移
-        onValue(ref(rdb, `rooms/${roomParam}/selections`), (snap) => {
-            const data = snap.val() || {};
-            const players = Object.keys(data);
-            // 両者（guest と例えば 'alice'）が選択済みかチェック
-            if (
-                players.length >= 2 &&
-                players.every(
-                    (id) => Array.isArray(data[id]) && data[id].length === 3,
-                )
-            ) {
-                location.href = `/duel/${encodeURIComponent(roomParam)}/battle`;
-            }
-        });
-    });
-
-    // モーダル外クリックで閉じる
-    battleModal.addEventListener("click", (e) => {
-        if (e.target === battleModal) {
-            battleModal.classList.remove("visible");
-        }
-    });
-</script> -->
-
 <script type="module">
-    // ❹ サーバーサイドの room をビルド時に文字列リテラルとして埋め込む
     const roomParam = "{room}";
-    // クエリパラメータ ?me=alice などで自分を特定
+
     const meId = new URL(location.href).searchParams.get("me") ?? "guest";
     import { rdb } from "../../firebase/client.js";
     import { ref, set, onValue } from "firebase/database";
-    // ① Firebase CDN モジュールをインポート
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    // import { getDatabase } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
-    // ② Firebase の設定（環境変数 or Astro の public 環境変数を使う）
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+
     const app = initializeApp(firebaseConfig);
     // const rdb = getDatabase(app);
 
-    // ❺ DOM 要素を取得
     const navBtns = document.querySelectorAll(".choose_nav button");
     const lists = document.querySelectorAll(".todo_list");
     const allBoxes = Array.from(
@@ -329,7 +220,6 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
     const battleModal = document.getElementById("battleModal");
     const btnProceed = document.getElementById("modalProceed");
 
-    // カテゴリ切り替え
     navBtns.forEach((btn) => {
         btn.addEventListener("click", () => {
             const cat = btn.dataset.cat;
@@ -356,13 +246,11 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
         });
     });
 
-    // モーダル「進む」ボタン
     btnProceed.addEventListener("click", () => {
         battleModal.classList.remove("visible");
-        // 選択済み ID の配列を作成
+
         const selected = allBoxes.filter((b) => b.checked).map((b) => b.id);
 
-        // rooms/{roomParam}/selections/{meId} に書き込み
         set(ref(rdb, `rooms/${roomParam}/selections/${meId}`), selected).catch(
             (err) => {
                 console.error("書き込みに失敗しました:", err);
@@ -370,7 +258,6 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
             },
         );
 
-        // 相手の選択がそろったら /battle へ遷移
         onValue(ref(rdb, `rooms/${roomParam}/selections`), (snap) => {
             const data = snap.val() || {};
             const players = Object.keys(data);
@@ -385,7 +272,6 @@ const stretchItems = stretchSnap.exists() ? stretchSnap.data().items : [];
         });
     });
 
-    // モーダル外クリックで閉じる
     battleModal.addEventListener("click", (e) => {
         if (e.target === battleModal) {
             battleModal.classList.remove("visible");

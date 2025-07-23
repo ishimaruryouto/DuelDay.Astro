@@ -7,7 +7,6 @@ export async function POST({ request }) {
     try {
         const body = await request.json();
         let { opponent, myId, todos } = body;
-        // opponentの「.」を「_」に置換！
         const safeOpponent = opponent.replace(/\./g, "_");
 
         if (
@@ -25,7 +24,7 @@ export async function POST({ request }) {
 
         return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
     } catch (e) {
-        console.error("🔥 APIサーバーエラー内容:", e);
+        console.error("APIサーバーエラー内容:", e);
         return new Response(
             JSON.stringify({ status: "ng", error: String(e) }),
             { status: 500 }

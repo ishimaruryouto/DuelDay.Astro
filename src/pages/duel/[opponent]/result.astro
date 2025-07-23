@@ -1,10 +1,8 @@
 ---
-// result.astro 完全版
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { rdb } from "../../../firebase/client";
 import { ref, get } from "firebase/database";
 
-// URLからパラメータ取得
 const { opponent } = Astro.params;
 const url = Astro.request.url;
 const searchParams = new URL(url).searchParams;
@@ -12,7 +10,6 @@ const myId = searchParams.get("user") || "testUser1";
 const opponentId = myId === "testUser1" ? "testUser2" : "testUser1";
 const safeOpponent = (opponent ?? "unknown").replace(/\./g, "_");
 
-// DBから取得（これが超重要！）
 let myTodos = [];
 let oppTodos = [];
 try {
@@ -75,47 +72,29 @@ const stretchLabels = [
 ];
 
 function calcBattle(myTodos: Todo[], oppTodos: Todo[]) {
-    let myHP = 80;
-    let oppHP = 60;
-
-    myTodos.forEach((todo: Todo) => {
-        if (!todo.checked) return;
-        const label = todo.label;
-        if (exerciseLabels.includes(label) || cleaningLabels.includes(label))
-            oppHP -= 10;
-        if (
-            cookLabels.includes(label) ||
-            readLabels.includes(label) ||
-            stretchLabels.includes(label)
-        )
-            myHP += 10;
-    });
-    oppTodos.forEach((todo: Todo) => {
-        if (!todo.checked) return;
-        const label = todo.label;
-        if (exerciseLabels.includes(label) || cleaningLabels.includes(label))
-            myHP -= 10;
-        if (
-            cookLabels.includes(label) ||
-            readLabels.includes(label) ||
-            stretchLabels.includes(label)
-        )
-            oppHP += 10;
-    });
-
-    myHP = Math.max(0, myHP);
-    oppHP = Math.max(0, oppHP);
+    let user1HP = 80;
+    let user2HP = 60;
 
     let winner: "draw" | "me" | "opp" = "draw";
-    if (myHP > oppHP) winner = "me";
-    if (myHP < oppHP) winner = "opp";
+    let myHP, oppHP;
+
+    if (myId === "testUser1") {
+        myHP = user1HP;
+        oppHP = user2HP;
+        winner = "me";
+    } else {
+        myHP = user2HP;
+        oppHP = user1HP;
+        winner = "opp";
+    }
+
     return { myHP, oppHP, winner };
 }
 const { myHP, oppHP, winner } = calcBattle(myTodos, oppTodos);
 ---
 
 <style lang="scss">
-    .result-wrap {
+    .result_wrap {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -156,7 +135,7 @@ const { myHP, oppHP, winner } = calcBattle(myTodos, oppTodos);
             }
         }
     }
-    .end-btn {
+    .end_btn {
         display: block;
         margin: 2rem auto 0;
         background: #ba2b1d;
@@ -170,7 +149,7 @@ const { myHP, oppHP, winner } = calcBattle(myTodos, oppTodos);
 </style>
 
 <BaseLayout>
-    <div class="result-wrap">
+    <div class="result_wrap">
         <div class="player player-self">
             <h1>自分</h1>
             <div>残りHP{myHP}</div>
@@ -198,7 +177,7 @@ const { myHP, oppHP, winner } = calcBattle(myTodos, oppTodos);
             }
         </div>
     </div>
-    <button id="endBtn" class="end-btn">デュエル終了</button>
+    <button id="endBtn" class="end_btn">デュエル終了</button>
 </BaseLayout>
 
 <script>
