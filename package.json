@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
+    "@astrojs/vercel": "^8.2.3",
     "astro": "^5.10.2",
     "firebase": "^11.10.0",
     "react": "^19.1.0",
